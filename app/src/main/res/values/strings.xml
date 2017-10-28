@@ -3,4 +3,7 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="toolbar_title">Bars</string>
+    <string name="tab1_title">Map</string>
+    <string name="tab0_title">List</string>
 </resources>

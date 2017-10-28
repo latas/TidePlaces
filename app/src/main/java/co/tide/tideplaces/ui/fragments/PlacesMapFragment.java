@@ -16,6 +16,7 @@ import butterknife.ButterKnife;
 import co.tide.tideplaces.R;
 import co.tide.tideplaces.ui.screens.UiMap;
 
+
 public class PlacesMapFragment extends Fragment implements UiMap, OnMapReadyCallback {
 
     @BindView(R.id.mapView)

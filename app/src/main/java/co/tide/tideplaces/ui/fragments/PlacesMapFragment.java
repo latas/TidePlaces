@@ -2,7 +2,6 @@ package co.tide.tideplaces.ui.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,12 +9,14 @@ import android.view.ViewGroup;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.tide.tideplaces.R;
+import co.tide.tideplaces.ui.screens.UiMap;
 
-public class PlacesMapFragment extends Fragment implements OnMapReadyCallback {
+public class PlacesMapFragment extends Fragment implements UiMap, OnMapReadyCallback {
 
     @BindView(R.id.mapView)
     MapView mapView;
@@ -33,7 +34,7 @@ public class PlacesMapFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Log.i("MAP","MAP IS READY");
+
     }
 
     @Override
@@ -41,4 +42,16 @@ public class PlacesMapFragment extends Fragment implements OnMapReadyCallback {
         mapView.onResume();
         super.onResume();
     }
+
+    @Override
+    public void onLocationSetFailed() {
+
+    }
+
+    @Override
+    public void addPoi(LatLng latLng) {
+
+    }
+
+
 }

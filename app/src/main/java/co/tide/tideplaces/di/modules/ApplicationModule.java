@@ -3,6 +3,8 @@ package co.tide.tideplaces.di.modules;
 import android.content.Context;
 
 import co.tide.tideplaces.di.scopes.AppScope;
+import co.tide.tideplaces.rxscheduler.BaseSchedulerProvider;
+import co.tide.tideplaces.rxscheduler.SchedulerProvider;
 import dagger.Module;
 import dagger.Provides;
 
@@ -18,6 +20,11 @@ public class ApplicationModule {
     @Provides
     public Context context() {
         return appContext;
+    }
+    @AppScope
+    @Provides
+    BaseSchedulerProvider scheduler(SchedulerProvider provider) {
+        return provider;
     }
 
 }

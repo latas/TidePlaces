@@ -26,6 +26,7 @@ public class ActivityModule {
 
     }
 
+
     @ActivityScope
     @Provides
     @Named("activity_context")
@@ -52,6 +53,13 @@ public class ActivityModule {
     @Provides
     public FragmentManager fragmentManager() {
         return placesActivity.getSupportFragmentManager();
+    }
+
+
+    @ActivityScope
+    @Provides
+    public int[] tabsIcons() {
+        return new int[]{R.drawable.list_indicator, R.drawable.map_indicator};
     }
 
 

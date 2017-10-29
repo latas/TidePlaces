@@ -5,7 +5,6 @@ import android.content.Context;
 import android.location.Location;
 import android.support.annotation.NonNull;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -18,21 +17,23 @@ import co.tide.tideplaces.data.models.LocationPermission;
 import co.tide.tideplaces.data.models.RxException;
 import co.tide.tideplaces.data.models.error.LocationError;
 import co.tide.tideplaces.data.models.error.UnAuthorizedLocationError;
+import co.tide.tideplaces.rxscheduler.BaseSchedulerProvider;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 
 public class MyLocationRepository implements Repository<LatLng> {
     Context context;
-    GoogleApiClient googleApiClient;
-    LocationPermission locationPermission;
+
+    final LocationPermission locationPermission;
+    final BaseSchedulerProvider provider;
 
 
     @Inject
-    public MyLocationRepository(@Named("activity_context") Context context, GoogleApiClient apiClient, LocationPermission locationPermission) {
+    public MyLocationRepository(@Named("activity_context") Context context, LocationPermission locationPermission, BaseSchedulerProvider provider) {
         this.context = context;
-        this.googleApiClient = apiClient;
         this.locationPermission = locationPermission;
+        this.provider = provider;
 
     }
 
@@ -59,6 +60,6 @@ public class MyLocationRepository implements Repository<LatLng> {
                     }
                 });
             }
-        });
+        }).subscribeOn(provider.io()).observeOn(provider.ui());
     }
 }

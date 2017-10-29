@@ -39,8 +39,7 @@ public class PlacesPresenter implements Observer<List<Place>> {
 
             @Override
             public void onNext(LatLng latLng) {
-                Log.i("alalala ", "lat " + latLng.latitude);
-                placesRepository.data().observeOn(AndroidSchedulers.mainThread()).subscribe(PlacesPresenter.this);
+                placesRepository.nearby(latLng).data().observeOn(AndroidSchedulers.mainThread()).subscribe(PlacesPresenter.this);
             }
 
             @Override
@@ -70,6 +69,7 @@ public class PlacesPresenter implements Observer<List<Place>> {
 
     @Override
     public void onError(Throwable t) {
+        Log.i("error", "thr " + t.toString());
         placesScreen.onErrorRetrievingPlaces();
     }
 

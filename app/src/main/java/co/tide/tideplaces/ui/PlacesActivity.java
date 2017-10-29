@@ -45,12 +45,8 @@ public class PlacesActivity extends AppCompatActivity implements LocationScreen,
     PlacesPresenter placesPresenter;
     @Inject
     ViewPagerAdapter adapter;
-
-
-    private int[] tabIcons = {
-            R.drawable.list_indicator,
-            R.drawable.map_indicator,
-    };
+    @Inject
+    int[] tabIcons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +119,6 @@ public class PlacesActivity extends AppCompatActivity implements LocationScreen,
 
     @Override
     public void showPlaces(List<Place> places) {
-        System.out.println("showing places " + places.size());
     }
 
     @Override

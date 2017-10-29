@@ -1,7 +1,8 @@
 package co.tide.tideplaces.ui.fragments;
 
-import android.app.Fragment;
+
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +10,6 @@ import android.view.ViewGroup;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-
-import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,15 +24,12 @@ public class PlacesMapFragment extends Fragment implements UiMap, PlacesView, On
     @BindView(R.id.mapView)
     MapView mapView;
 
-    @Inject
-    MapPresenter mapPresenter;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.map_fragment_layout, container, false);
         ButterKnife.bind(this, view);
-
+        mapView.onCreate(savedInstanceState);
         new MapPresenter(mapView, this).loadMap();
 
         return view;
@@ -51,8 +47,11 @@ public class PlacesMapFragment extends Fragment implements UiMap, PlacesView, On
         super.onResume();
     }
 
-
-
+    @Override
+    public void onDestroy() {
+        mapView.onDestroy();
+        super.onDestroy();
+    }
 
 
     @Override

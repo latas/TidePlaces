@@ -22,6 +22,7 @@ import co.tide.tideplaces.di.components.ActivityComponent;
 import co.tide.tideplaces.di.components.DaggerActivityComponent;
 import co.tide.tideplaces.di.modules.ActivityModule;
 import co.tide.tideplaces.presenters.LocationPresenter;
+import co.tide.tideplaces.presenters.PlacesPresenter;
 import co.tide.tideplaces.ui.adapters.ViewPagerAdapter;
 import co.tide.tideplaces.ui.screens.LocationScreen;
 
@@ -35,6 +36,8 @@ public class PlacesActivity extends AppCompatActivity implements LocationScreen 
 
     @Inject
     LocationPresenter locationPresenter;
+    @Inject
+    PlacesPresenter placesPresenter;
 
 
     private int[] tabIcons = {
@@ -62,6 +65,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationScreen 
         tabLayout.setupWithViewPager(viewPager);
         addTabIcons();
 
+        placesPresenter.showPlaces();
         locationPresenter.locateMe();
     }
 

@@ -11,7 +11,6 @@ public class ApplicationModule {
     final Context appContext;
 
     public ApplicationModule(Context appContext) {
-
         this.appContext = appContext;
     }
 

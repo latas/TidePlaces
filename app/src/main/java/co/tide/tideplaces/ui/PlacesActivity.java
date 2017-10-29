@@ -9,6 +9,9 @@ import android.support.v7.widget.Toolbar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.tide.tideplaces.R;
+import co.tide.tideplaces.TideApp;
+import co.tide.tideplaces.di.components.ActivityComponent;
+import co.tide.tideplaces.di.components.DaggerActivityComponent;
 import co.tide.tideplaces.ui.adapters.ViewPagerAdapter;
 
 public class PlacesActivity extends AppCompatActivity {
@@ -19,6 +22,9 @@ public class PlacesActivity extends AppCompatActivity {
     @BindView(R.id.viewpager)
     ViewPager viewPager;
 
+    ActivityComponent activityComponent;
+
+
     private int[] tabIcons = {
             R.drawable.list_indicator,
             R.drawable.map_indicator,
@@ -27,6 +33,9 @@ public class PlacesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activityComponent = DaggerActivityComponent.builder().appComponent(((TideApp) getApplication()).component()).build();
+        activityComponent.inject(this);
+
         setContentView(R.layout.activity_places);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
@@ -47,4 +56,7 @@ public class PlacesActivity extends AppCompatActivity {
         tabLayout.getTabAt(1).setIcon(tabIcons[1]);
     }
 
+    public ActivityComponent activityComponent() {
+        return activityComponent;
+    }
 }

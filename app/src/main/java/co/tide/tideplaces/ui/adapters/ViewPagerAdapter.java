@@ -6,8 +6,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
-import co.tide.tideplaces.ui.fragments.PlacesListFragment;
 import co.tide.tideplaces.ui.fragments.PlacesMapFragment;
+import co.tide.tideplaces.ui.fragments.PlacesListFragment;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
     SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();

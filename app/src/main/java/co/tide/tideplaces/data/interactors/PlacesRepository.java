@@ -5,33 +5,35 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
-import co.tide.tideplaces.data.models.ResultListener;
-import co.tide.tideplaces.data.responses.PlaceResponse;
+import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.data.rest.ApiService;
-import co.tide.tideplaces.di.scopes.ActivityScope;
-import io.reactivex.functions.Consumer;
+import co.tide.tideplaces.data.rest.GooglePlacesParams;
+import co.tide.tideplaces.data.rest.QueryParams;
+import io.reactivex.Observable;
 
-@ActivityScope
-public class PlacesRepository implements Repository<List<PlaceResponse>>, Consumer<LatLng> {
+public class PlacesRepository implements Repository<List<Place>> {
 
 
-    public ApiService apiService;
+    private final ApiService apiService;
+    private Observable<List<Place>> observable;
+    private QueryParams params;
+    private final String apiKey;
 
     @Inject
-    public PlacesRepository(ApiService apiService) {
+    public PlacesRepository(ApiService apiService, @Named("apiKey") String apiKey) {
         this.apiService = apiService;
+        this.apiKey = apiKey;
+    }
+
+    public PlacesRepository nearby(LatLng poi) {
+        params = new GooglePlacesParams(poi, apiKey).build();
+        return this;
     }
 
     @Override
-    public void data(ResultListener<List<PlaceResponse>> listener) {
-
+    public Observable<List<Place>> data() {
+        return null;
     }
-
-    @Override
-    public void accept(LatLng latLng) throws Exception {
-
-    }
-
-
 }

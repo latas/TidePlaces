@@ -4,8 +4,11 @@ import android.content.Context;
 
 import javax.inject.Named;
 
+import co.tide.tideplaces.R;
 import co.tide.tideplaces.di.scopes.ActivityScope;
+import co.tide.tideplaces.ui.PlacesActivity;
 import co.tide.tideplaces.ui.screens.LocationScreen;
+import co.tide.tideplaces.ui.screens.PlacesScreen;
 import dagger.Module;
 import dagger.Provides;
 
@@ -13,12 +16,13 @@ import dagger.Provides;
 public class ActivityModule {
 
     final Context activityContext;
-    final LocationScreen locationScreen;
+    final PlacesActivity placesActivity;
 
 
-    public ActivityModule(Context activityContext, LocationScreen locationScreen) {
+    public ActivityModule(Context activityContext, PlacesActivity placesActivity) {
         this.activityContext = activityContext;
-        this.locationScreen = locationScreen;
+        this.placesActivity = placesActivity;
+
     }
 
     @ActivityScope
@@ -30,8 +34,15 @@ public class ActivityModule {
 
     @ActivityScope
     @Provides
+    public PlacesScreen locationScreen() {
+        return placesActivity;
+    }
 
-    public LocationScreen locationScreen() {
-        return locationScreen;
+
+
+    @ActivityScope
+    @Provides
+    public LocationScreen placesScreen() {
+        return placesActivity;
     }
 }

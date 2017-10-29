@@ -10,4 +10,5 @@
     <string name="empty">\"\"</string>
     <string name="permission_denied">Permission denied</string>
     <string name="api_base_url">https://maps.googleapis.com/</string>
+    <string name="error_with_places">Error retrieving places</string>
 </resources>

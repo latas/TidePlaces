@@ -1,6 +1,6 @@
 package co.tide.tideplaces.ui.screens;
 
-import android.location.Location;
+import com.google.android.gms.maps.model.LatLng;
 
 public interface LocationScreen {
 
@@ -9,7 +9,7 @@ public interface LocationScreen {
 
     void onLocationSetFailed(int message);
 
-    void onLocationRetrieved(Location latLng);
+    void onLocationRetrieved(LatLng latLng);
 
     void startLocating();
 }

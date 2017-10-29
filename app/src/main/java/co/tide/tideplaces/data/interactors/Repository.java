@@ -1,8 +1,9 @@
 package co.tide.tideplaces.data.interactors;
 
-import co.tide.tideplaces.data.models.ResultListener;
+
+import io.reactivex.Observable;
 
 public interface Repository<T> {
-    void data(ResultListener<T> listener);
+    Observable<T> data();
 
 }

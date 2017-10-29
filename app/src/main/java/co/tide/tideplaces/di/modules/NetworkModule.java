@@ -45,6 +45,7 @@ public class NetworkModule {
                 .build();
     }
 
+
     @Provides
     @AppScope
     public ApiService service(Retrofit retrofit) {

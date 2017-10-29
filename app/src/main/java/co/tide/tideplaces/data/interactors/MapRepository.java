@@ -4,11 +4,13 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 
-import co.tide.tideplaces.data.models.ResultListener;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 
-public class MapRepository implements Repository<GoogleMap>, OnMapReadyCallback {
+public class MapRepository implements Repository<GoogleMap> {
     final MapView mapView;
-    ResultListener<GoogleMap> listener;
+
 
     public MapRepository(MapView mapView) {
         this.mapView = mapView;
@@ -16,15 +18,22 @@ public class MapRepository implements Repository<GoogleMap>, OnMapReadyCallback 
 
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        this.listener.success(googleMap);
-    }
+    public Observable<GoogleMap> data() {
 
-    @Override
-    public void data(ResultListener<GoogleMap> listener) {
-        listener.start();
-        this.listener = listener;
-        mapView.getMapAsync(this);
+
+        return Observable.create(new ObservableOnSubscribe<GoogleMap>() {
+            @Override
+            public void subscribe(final ObservableEmitter<GoogleMap> e) throws Exception {
+                mapView.getMapAsync(new OnMapReadyCallback() {
+                    @Override
+                    public void onMapReady(GoogleMap googleMap) {
+                        e.onNext(googleMap);
+                    }
+                });
+            }
+        });
+
+
     }
 
 

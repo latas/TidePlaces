@@ -1,69 +1,64 @@
 package co.tide.tideplaces.data.interactors;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Location;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import co.tide.tideplaces.data.models.LocationPermission;
-import co.tide.tideplaces.data.models.ResultListener;
+import co.tide.tideplaces.data.models.RxException;
 import co.tide.tideplaces.data.models.error.LocationError;
-import co.tide.tideplaces.di.scopes.ActivityScope;
+import co.tide.tideplaces.data.models.error.UnAuthorizedLocationError;
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 
-@ActivityScope
-public class MyLocationRepository implements Repository<Location>, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MyLocationRepository implements Repository<LatLng> {
     Context context;
     GoogleApiClient googleApiClient;
-    ResultListener<Location> listener;
     LocationPermission locationPermission;
-    Consumer<LatLng> locationConsumer;
 
 
     @Inject
-    public MyLocationRepository(@Named("activity_context") Context context, GoogleApiClient apiClient, LocationPermission locationPermission, Consumer<LatLng> locationConsumer) {
+    public MyLocationRepository(@Named("activity_context") Context context, GoogleApiClient apiClient, LocationPermission locationPermission) {
         this.context = context;
         this.googleApiClient = apiClient;
         this.locationPermission = locationPermission;
-        this.locationConsumer = locationConsumer;
+
     }
 
 
     @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        listener.failure(new LocationError());
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        listener.failure(new LocationError());
-    }
-
-
-    @Override
-    public void data(ResultListener<Location> listener) {
-     /*   this.listener = listener;
-        googleApiClient.registerConnectionCallbacks(this);
-        googleApiClient.registerConnectionFailedListener(this);
-        this.listener.start();
-        googleApiClient.connect();
-*/
-        Observable.just(new LatLng(10, 10)).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(locationConsumer);
+    public Observable<LatLng> data() {
+        return Observable.create(new ObservableOnSubscribe<LatLng>() {
+            @SuppressLint("MissingPermission")
+            @Override
+            public void subscribe(final ObservableEmitter<LatLng> e) throws Exception {
+                if (!locationPermission.granted()) {
+                    e.onError(new RxException(new UnAuthorizedLocationError()));
+                    return;
+                }
+                LocationServices.getFusedLocationProviderClient(context).getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Location> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            e.onNext(new LatLng(task.getResult().getLatitude(), task.getResult().getLongitude()));
+                        } else {
+                            e.onError(new Throwable(
+                                    new RxException(new LocationError())));
+                        }
+                    }
+                });
+            }
+        });
     }
 }

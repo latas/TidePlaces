@@ -2,7 +2,6 @@ package co.tide.tideplaces.ui;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
@@ -12,12 +11,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.List;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.tide.tideplaces.R;
 import co.tide.tideplaces.TideApp;
+import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.di.components.ActivityComponent;
 import co.tide.tideplaces.di.components.DaggerActivityComponent;
 import co.tide.tideplaces.di.modules.ActivityModule;
@@ -25,8 +29,9 @@ import co.tide.tideplaces.presenters.LocationPresenter;
 import co.tide.tideplaces.presenters.PlacesPresenter;
 import co.tide.tideplaces.ui.adapters.ViewPagerAdapter;
 import co.tide.tideplaces.ui.screens.LocationScreen;
+import co.tide.tideplaces.ui.screens.PlacesScreen;
 
-public class PlacesActivity extends AppCompatActivity implements LocationScreen {
+public class PlacesActivity extends AppCompatActivity implements LocationScreen, PlacesScreen {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.tablayout)
@@ -65,8 +70,9 @@ public class PlacesActivity extends AppCompatActivity implements LocationScreen 
         tabLayout.setupWithViewPager(viewPager);
         addTabIcons();
 
-        placesPresenter.showPlaces();
         locationPresenter.locateMe();
+        placesPresenter.showPlaces();
+
     }
 
     private void addTabIcons() {
@@ -92,9 +98,10 @@ public class PlacesActivity extends AppCompatActivity implements LocationScreen 
     }
 
     @Override
-    public void onLocationRetrieved(Location location) {
+    public void onLocationRetrieved(LatLng latLng) {
 
     }
+
 
     @Override
     public void startLocating() {
@@ -113,5 +120,15 @@ public class PlacesActivity extends AppCompatActivity implements LocationScreen 
 
     private void showErrorMessage(int message) {
         Toast.makeText(this, getString(message), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void showPlaces(List<Place> places) {
+        System.out.println("showing places " + places.size());
+    }
+
+    @Override
+    public void onErrorRetrievingPlaces() {
+        Toast.makeText(this, getString(R.string.error_with_places), Toast.LENGTH_LONG).show();
     }
 }

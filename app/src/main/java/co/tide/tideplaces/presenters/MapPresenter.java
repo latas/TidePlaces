@@ -4,11 +4,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 
 import co.tide.tideplaces.data.interactors.MapRepository;
-import co.tide.tideplaces.data.models.ResultListener;
-import co.tide.tideplaces.data.models.error.Error;
 import co.tide.tideplaces.ui.screens.UiMap;
+import io.reactivex.functions.Consumer;
 
-public class MapPresenter {
+public class MapPresenter implements Consumer<GoogleMap> {
 
 
     MapView mapView;
@@ -21,21 +20,11 @@ public class MapPresenter {
     }
 
     public void loadMap() {
-        new MapRepository(mapView).data(new ResultListener<GoogleMap>() {
-            @Override
-            public void start() {
+        new MapRepository(mapView).data().subscribe(this);
+    }
 
-            }
-
-            @Override
-            public void success(GoogleMap googleMap) {
-                map.onMapLoaded(googleMap);
-            }
-
-            @Override
-            public void failure(Error e) {
-
-            }
-        });
+    @Override
+    public void accept(GoogleMap googleMap) throws Exception {
+        map.onMapLoaded(googleMap);
     }
 }

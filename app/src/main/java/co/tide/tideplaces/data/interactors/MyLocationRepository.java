@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import javax.inject.Inject;
@@ -59,9 +60,10 @@ public class MyLocationRepository implements Repository<Location>, GoogleApiClie
 
     @Override
     public void data(ResultListener<Location> listener) {
-        listener.start();
+        this.listener = listener;
         googleApiClient.registerConnectionCallbacks(this);
         googleApiClient.registerConnectionFailedListener(this);
+        this.listener.start();
         googleApiClient.connect();
     }
 }

@@ -8,4 +8,5 @@
     <string name="tab0_title">List</string>
     <string name="location_cannot_retrieved_message">Current location cannot be retrieved</string>
     <string name="empty">\"\"</string>
+    <string name="permission_denied">Permission denied</string>
 </resources>

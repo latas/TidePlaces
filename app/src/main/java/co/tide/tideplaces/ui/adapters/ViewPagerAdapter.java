@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
+import javax.inject.Inject;
+
 import co.tide.tideplaces.data.models.PlacesView;
 import co.tide.tideplaces.ui.fragments.PlacesListFragment;
 import co.tide.tideplaces.ui.fragments.PlacesMapFragment;
@@ -15,6 +17,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     final String[] fragmentsTitle;
     final int fragmentsCount = 2;
 
+    @Inject
     public ViewPagerAdapter(FragmentManager fm, String[] fragmentsTitle) {
         super(fm);
         this.fragmentsTitle = fragmentsTitle;

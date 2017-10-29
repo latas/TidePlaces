@@ -1,6 +1,7 @@
 package co.tide.tideplaces.di.modules;
 
 import android.content.Context;
+import android.support.v4.app.FragmentManager;
 
 import javax.inject.Named;
 
@@ -38,6 +39,20 @@ public class ActivityModule {
         return placesActivity;
     }
 
+    @ActivityScope
+    @Provides
+    public String[] tabsTitle() {
+        return new String[]{
+                context().getResources().getString(R.string.tab0_title),
+                context().getResources().getString(R.string.tab1_title)
+        };
+    }
+
+    @ActivityScope
+    @Provides
+    public FragmentManager fragmentManager() {
+        return placesActivity.getSupportFragmentManager();
+    }
 
 
     @ActivityScope

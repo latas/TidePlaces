@@ -5,12 +5,12 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.data.rest.ApiService;
-import co.tide.tideplaces.data.rest.GooglePlacesParams;
-import co.tide.tideplaces.data.rest.QueryParams;
+import co.tide.tideplaces.data.rest.params.ConstantParams;
+import co.tide.tideplaces.data.rest.params.GooglePlacesSearch;
+import co.tide.tideplaces.data.rest.params.SearchQuery;
 import io.reactivex.Observable;
 
 public class PlacesRepository implements Repository<List<Place>> {
@@ -18,17 +18,17 @@ public class PlacesRepository implements Repository<List<Place>> {
 
     private final ApiService apiService;
     private Observable<List<Place>> observable;
-    private QueryParams params;
-    private final String apiKey;
+    private SearchQuery params;
+    private final ConstantParams constantParams;
 
     @Inject
-    public PlacesRepository(ApiService apiService, @Named("apiKey") String apiKey) {
+    public PlacesRepository(ApiService apiService, ConstantParams constantParams) {
         this.apiService = apiService;
-        this.apiKey = apiKey;
+        this.constantParams = constantParams;
     }
 
     public PlacesRepository nearby(LatLng poi) {
-        params = new GooglePlacesParams(poi, apiKey).build();
+        params = new GooglePlacesSearch(poi, constantParams).build();
         return this;
     }
 

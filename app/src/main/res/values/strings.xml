@@ -11,4 +11,6 @@
     <string name="permission_denied">Permission denied</string>
     <string name="api_base_url">https://maps.googleapis.com/</string>
     <string name="error_with_places">Error retrieving places</string>
+
+    <string name="places_type" translatable="false">bar</string>
 </resources>

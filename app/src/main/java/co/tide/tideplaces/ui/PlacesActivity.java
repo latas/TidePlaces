@@ -43,6 +43,8 @@ public class PlacesActivity extends AppCompatActivity implements LocationScreen,
     LocationPresenter locationPresenter;
     @Inject
     PlacesPresenter placesPresenter;
+    @Inject
+    ViewPagerAdapter adapter;
 
 
     private int[] tabIcons = {
@@ -62,10 +64,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationScreen,
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setTitle(getResources().getString(R.string.toolbar_title));
-        viewPager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager(), new String[]{getResources().getString(R.string.tab0_title),
-                getResources().getString(R.string.tab1_title)
-
-        }));
+        viewPager.setAdapter(adapter);
 
         tabLayout.setupWithViewPager(viewPager);
         addTabIcons();

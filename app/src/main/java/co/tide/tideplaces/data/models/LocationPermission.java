@@ -5,17 +5,20 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 /**
  * BeatTestProject-Android
  * <p>
  * Created by Antonis Latas on 9/15/2017
- *
  */
 
 public class LocationPermission {
     final Context context;
 
-    public LocationPermission(Context context) {
+    @Inject
+    public LocationPermission(@Named("activity_context") Context context) {
         this.context = context;
     }
 

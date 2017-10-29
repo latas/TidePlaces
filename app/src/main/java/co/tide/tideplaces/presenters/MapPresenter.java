@@ -5,6 +5,7 @@ import com.google.android.gms.maps.MapView;
 
 import co.tide.tideplaces.data.interactors.MapRepository;
 import co.tide.tideplaces.data.models.ResultListener;
+import co.tide.tideplaces.data.models.error.Error;
 import co.tide.tideplaces.ui.screens.UiMap;
 
 public class MapPresenter {
@@ -32,7 +33,7 @@ public class MapPresenter {
             }
 
             @Override
-            public void failure() {
+            public void failure(Error e) {
 
             }
         });

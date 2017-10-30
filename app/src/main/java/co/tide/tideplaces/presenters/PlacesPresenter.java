@@ -1,7 +1,5 @@
 package co.tide.tideplaces.presenters;
 
-import android.util.Log;
-
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
@@ -40,6 +38,7 @@ public class PlacesPresenter implements Observer<List<Place>> {
 
             @Override
             public void onNext(LatLng latLng) {
+
                 placesRepository.nearby(latLng).data().subscribeOn(provider.io()).observeOn(provider.ui()).subscribe(PlacesPresenter.this);
             }
 
@@ -64,13 +63,14 @@ public class PlacesPresenter implements Observer<List<Place>> {
 
     @Override
     public void onNext(List<Place> places) {
-        placesScreen.showPlaces(places);
+        if (!places.isEmpty())
+            placesScreen.showPlaces(places);
+        else placesScreen.onErrorRetrievingPlaces();
     }
 
 
     @Override
     public void onError(Throwable t) {
-        Log.i("error", "thr " + t.toString());
         placesScreen.onErrorRetrievingPlaces();
     }
 

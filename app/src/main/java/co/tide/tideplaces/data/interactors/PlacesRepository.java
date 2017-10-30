@@ -23,7 +23,6 @@ public class PlacesRepository implements Repository<List<Place>> {
 
 
     private final ApiService apiService;
-    private Observable<List<Place>> observable;
     private SearchQuery params;
     private final ConstantParams constantParams;
     private final BaseSchedulerProvider provider;
@@ -51,8 +50,5 @@ public class PlacesRepository implements Repository<List<Place>> {
                 return Observable.just(places);
             }
         });
-
-
-        //  return Observable.just(Collections.<Place>emptyList());
     }
 }

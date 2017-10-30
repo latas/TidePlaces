@@ -4,23 +4,26 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 
 import co.tide.tideplaces.data.interactors.MapRepository;
+import co.tide.tideplaces.rxscheduler.BaseSchedulerProvider;
 import co.tide.tideplaces.ui.screens.UiMap;
 import io.reactivex.functions.Consumer;
 
 public class MapPresenter implements Consumer<GoogleMap> {
 
 
-    MapView mapView;
-    UiMap map;
+    final MapView mapView;
+    final UiMap map;
+    final BaseSchedulerProvider provider;
 
 
-    public MapPresenter(MapView mapView, UiMap map) {
+    public MapPresenter(MapView mapView, UiMap map, BaseSchedulerProvider provider) {
         this.mapView = mapView;
         this.map = map;
+        this.provider = provider;
     }
 
     public void loadMap() {
-        new MapRepository(mapView).data().subscribe(this);
+        new MapRepository(mapView).data().subscribeOn(provider.ui()).subscribeOn(provider.ui()).subscribe(this);
     }
 
     @Override

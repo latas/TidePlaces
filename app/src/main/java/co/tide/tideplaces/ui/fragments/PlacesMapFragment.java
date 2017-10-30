@@ -16,6 +16,7 @@ import butterknife.ButterKnife;
 import co.tide.tideplaces.R;
 import co.tide.tideplaces.data.models.PlacesView;
 import co.tide.tideplaces.presenters.MapPresenter;
+import co.tide.tideplaces.rxscheduler.SchedulerProvider;
 import co.tide.tideplaces.ui.screens.UiMap;
 
 
@@ -30,7 +31,7 @@ public class PlacesMapFragment extends Fragment implements UiMap, PlacesView, On
         View view = inflater.inflate(R.layout.map_fragment_layout, container, false);
         ButterKnife.bind(this, view);
         mapView.onCreate(savedInstanceState);
-        new MapPresenter(mapView, this).loadMap();
+        new MapPresenter(mapView, this,new SchedulerProvider()).loadMap();
 
         return view;
     }

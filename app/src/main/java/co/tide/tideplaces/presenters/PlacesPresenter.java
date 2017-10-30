@@ -11,27 +11,28 @@ import javax.inject.Inject;
 import co.tide.tideplaces.data.interactors.MyLocationRepository;
 import co.tide.tideplaces.data.interactors.PlacesRepository;
 import co.tide.tideplaces.data.models.Place;
+import co.tide.tideplaces.rxscheduler.BaseSchedulerProvider;
 import co.tide.tideplaces.ui.screens.PlacesScreen;
 import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
 public class PlacesPresenter implements Observer<List<Place>> {
     final PlacesRepository placesRepository;
     final MyLocationRepository locationRepository;
     final PlacesScreen placesScreen;
-
+    final BaseSchedulerProvider provider;
 
     @Inject
-    public PlacesPresenter(PlacesScreen placesScreen, PlacesRepository placesRepository, MyLocationRepository locationRepository) {
+    public PlacesPresenter(PlacesScreen placesScreen, PlacesRepository placesRepository, MyLocationRepository locationRepository, BaseSchedulerProvider provider) {
         this.placesRepository = placesRepository;
         this.placesScreen = placesScreen;
         this.locationRepository = locationRepository;
+        this.provider = provider;
     }
 
 
     public void showPlaces() {
-        locationRepository.data().subscribe(new Observer<LatLng>() {
+        locationRepository.data().subscribeOn(provider.io()).observeOn(provider.ui()).subscribe(new Observer<LatLng>() {
             @Override
             public void onSubscribe(Disposable d) {
 
@@ -39,7 +40,7 @@ public class PlacesPresenter implements Observer<List<Place>> {
 
             @Override
             public void onNext(LatLng latLng) {
-                placesRepository.nearby(latLng).data().observeOn(AndroidSchedulers.mainThread()).subscribe(PlacesPresenter.this);
+                placesRepository.nearby(latLng).data().subscribeOn(provider.io()).observeOn(provider.ui()).subscribe(PlacesPresenter.this);
             }
 
             @Override

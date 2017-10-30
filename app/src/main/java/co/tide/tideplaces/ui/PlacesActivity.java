@@ -9,6 +9,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -25,7 +26,6 @@ import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.di.components.ActivityComponent;
 import co.tide.tideplaces.di.components.DaggerActivityComponent;
 import co.tide.tideplaces.di.modules.ActivityModule;
-import co.tide.tideplaces.presenters.LocationPresenter;
 import co.tide.tideplaces.presenters.PlacesPresenter;
 import co.tide.tideplaces.ui.adapters.ViewPagerAdapter;
 import co.tide.tideplaces.ui.screens.LocationScreen;
@@ -39,8 +39,6 @@ public class PlacesActivity extends AppCompatActivity implements LocationScreen,
     @BindView(R.id.viewpager)
     ViewPager viewPager;
 
-    @Inject
-    LocationPresenter locationPresenter;
     @Inject
     PlacesPresenter placesPresenter;
     @Inject
@@ -65,7 +63,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationScreen,
         tabLayout.setupWithViewPager(viewPager);
         addTabIcons();
 
-        locationPresenter.locateMe();
+
         placesPresenter.showPlaces();
 
     }
@@ -109,7 +107,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationScreen,
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults.length > 0
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            locationPresenter.locateMe();
+            placesPresenter.showPlaces();
         } else showErrorMessage(R.string.permission_denied);
     }
 
@@ -119,6 +117,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationScreen,
 
     @Override
     public void showPlaces(List<Place> places) {
+
     }
 
     @Override

@@ -17,23 +17,19 @@ import co.tide.tideplaces.data.models.LocationPermission;
 import co.tide.tideplaces.data.models.RxException;
 import co.tide.tideplaces.data.models.error.LocationError;
 import co.tide.tideplaces.data.models.error.UnAuthorizedLocationError;
-import co.tide.tideplaces.rxscheduler.BaseSchedulerProvider;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 
 public class MyLocationRepository implements Repository<LatLng> {
-    Context context;
-
     final LocationPermission locationPermission;
-    final BaseSchedulerProvider provider;
+    Context context;
 
 
     @Inject
-    public MyLocationRepository(@Named("activity_context") Context context, LocationPermission locationPermission, BaseSchedulerProvider provider) {
+    public MyLocationRepository(@Named("activity_context") Context context, LocationPermission locationPermission) {
         this.context = context;
         this.locationPermission = locationPermission;
-        this.provider = provider;
 
     }
 
@@ -60,6 +56,6 @@ public class MyLocationRepository implements Repository<LatLng> {
                     }
                 });
             }
-        }).subscribeOn(provider.io()).observeOn(provider.ui());
+        });
     }
 }

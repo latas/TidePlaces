@@ -8,6 +8,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import co.tide.tideplaces.data.models.Place;
+import co.tide.tideplaces.data.responses.GSPlaceResult;
 import co.tide.tideplaces.data.responses.GSPlacesResponse;
 import co.tide.tideplaces.data.rest.ApiService;
 import co.tide.tideplaces.data.rest.params.ConstantParams;
@@ -45,11 +46,11 @@ public class PlacesRepository implements Repository<List<Place>> {
             @Override
             public ObservableSource<List<Place>> apply(GSPlacesResponse gsPlaceRepons) throws Exception {
                 List<Place> places = new ArrayList<>();
-                for (GSPlacesResponse.GSPlaceResult result : gsPlaceRepons.results())
+                for (GSPlaceResult result : gsPlaceRepons.results())
                     places.add(result.map());
                 return Observable.just(places);
             }
-        }).observeOn(provider.ui());
+        });
 
 
         //  return Observable.just(Collections.<Place>emptyList());

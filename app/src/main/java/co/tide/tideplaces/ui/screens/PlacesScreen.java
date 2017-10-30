@@ -6,6 +6,9 @@ import co.tide.tideplaces.data.models.Place;
 
 public interface PlacesScreen {
     void showPlaces(List<Place> places);
-    void onErrorRetrievingPlaces();
+
+    void onErrorRetrievingPlaces(int message);
+
+    void requestLocationPermission();
 
 }

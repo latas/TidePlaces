@@ -9,10 +9,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.widget.Toast;
-
-import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
@@ -28,10 +25,9 @@ import co.tide.tideplaces.di.components.DaggerActivityComponent;
 import co.tide.tideplaces.di.modules.ActivityModule;
 import co.tide.tideplaces.presenters.PlacesPresenter;
 import co.tide.tideplaces.ui.adapters.ViewPagerAdapter;
-import co.tide.tideplaces.ui.screens.LocationScreen;
 import co.tide.tideplaces.ui.screens.PlacesScreen;
 
-public class PlacesActivity extends AppCompatActivity implements LocationScreen, PlacesScreen {
+public class PlacesActivity extends AppCompatActivity implements PlacesScreen {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.tablayout)
@@ -81,24 +77,6 @@ public class PlacesActivity extends AppCompatActivity implements LocationScreen,
                 Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
         }, 1);
 
-
-    }
-
-    @Override
-    public void onLocationSetFailed(int message) {
-        Toast.makeText(this, getResources().getString(message), Toast.LENGTH_LONG).show();
-
-    }
-
-    @Override
-    public void onLocationRetrieved(LatLng latLng) {
-
-    }
-
-
-    @Override
-    public void startLocating() {
-
     }
 
     @Override
@@ -121,7 +99,7 @@ public class PlacesActivity extends AppCompatActivity implements LocationScreen,
     }
 
     @Override
-    public void onErrorRetrievingPlaces() {
-        Toast.makeText(this, getString(R.string.error_with_places), Toast.LENGTH_LONG).show();
+    public void onErrorRetrievingPlaces(int message) {
+        Toast.makeText(this, getString(message), Toast.LENGTH_LONG).show();
     }
 }

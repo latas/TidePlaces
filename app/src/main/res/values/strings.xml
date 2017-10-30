@@ -10,7 +10,8 @@
     <string name="empty">\"\"</string>
     <string name="permission_denied">Permission denied</string>
     <string name="api_base_url">https://maps.googleapis.com/</string>
-    <string name="error_with_places">Error retrieving places</string>
-
+    <string name="general_error_retrieving_places">Error retrieving places</string>
+    <string name="no_close_places_error">No close bars. Try move to another location!</string>
     <string name="places_type" translatable="false">bar</string>
+
 </resources>

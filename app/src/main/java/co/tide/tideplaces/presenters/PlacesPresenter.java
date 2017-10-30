@@ -6,9 +6,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import co.tide.tideplaces.R;
 import co.tide.tideplaces.data.interactors.MyLocationRepository;
 import co.tide.tideplaces.data.interactors.PlacesRepository;
 import co.tide.tideplaces.data.models.Place;
+import co.tide.tideplaces.data.models.RxException;
 import co.tide.tideplaces.rxscheduler.BaseSchedulerProvider;
 import co.tide.tideplaces.ui.screens.PlacesScreen;
 import io.reactivex.Observer;
@@ -44,6 +46,14 @@ public class PlacesPresenter implements Observer<List<Place>> {
 
             @Override
             public void onError(Throwable e) {
+                if (!(e instanceof RxException)) {
+                    placesScreen.onErrorRetrievingPlaces(R.string.general_error_retrieving_places);
+                    return;
+                }
+                if (((RxException) e).isUnAuthorizedPermissionError()) {
+                    placesScreen.requestLocationPermission();
+                } else
+                    placesScreen.onErrorRetrievingPlaces(((RxException) e).message());
 
             }
 
@@ -63,15 +73,15 @@ public class PlacesPresenter implements Observer<List<Place>> {
 
     @Override
     public void onNext(List<Place> places) {
-        if (!places.isEmpty())
-            placesScreen.showPlaces(places);
-        else placesScreen.onErrorRetrievingPlaces();
+        placesScreen.showPlaces(places);
     }
 
 
     @Override
     public void onError(Throwable t) {
-        placesScreen.onErrorRetrievingPlaces();
+        if (t instanceof RxException)
+            placesScreen.onErrorRetrievingPlaces(((RxException) t).message());
+        else placesScreen.onErrorRetrievingPlaces(R.string.general_error_retrieving_places);
     }
 
     @Override

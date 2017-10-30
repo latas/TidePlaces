@@ -8,6 +8,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import co.tide.tideplaces.data.models.Place;
+import co.tide.tideplaces.data.models.RxException;
+import co.tide.tideplaces.data.models.error.NoClosePlacesError;
 import co.tide.tideplaces.data.responses.GSPlaceResult;
 import co.tide.tideplaces.data.responses.GSPlacesResponse;
 import co.tide.tideplaces.data.rest.ApiService;
@@ -41,9 +43,11 @@ public class PlacesRepository implements Repository<List<Place>> {
 
     @Override
     public Observable<List<Place>> data() {
-       return apiService.getPlaces(params.params()[0], params.params()[1], params.params()[2], params.params()[3]).subscribeOn(provider.io()).flatMap(new Function<GSPlacesResponse, ObservableSource<List<Place>>>() {
+        return apiService.getPlaces(params.params()[0], params.params()[1], params.params()[2], params.params()[3]).subscribeOn(provider.io()).flatMap(new Function<GSPlacesResponse, ObservableSource<List<Place>>>() {
             @Override
             public ObservableSource<List<Place>> apply(GSPlacesResponse gsPlaceRepons) throws Exception {
+                if (gsPlaceRepons.results().isEmpty())
+                    return Observable.error(new RxException(new NoClosePlacesError()));
                 List<Place> places = new ArrayList<>();
                 for (GSPlaceResult result : gsPlaceRepons.results())
                     places.add(result.map());

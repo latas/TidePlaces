@@ -18,4 +18,7 @@ public class RxException extends Exception {
     public int message() {
         return error.message();
     }
+    public int code() {
+        return error.code();
+    }
 }

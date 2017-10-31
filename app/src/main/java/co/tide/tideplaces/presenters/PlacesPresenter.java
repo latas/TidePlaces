@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import co.tide.tideplaces.R;
 import co.tide.tideplaces.data.interactors.PlacesRepository;
 import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.data.models.RxException;
@@ -46,17 +45,11 @@ public class PlacesPresenter implements Observer<List<Place>> {
 
     @Override
     public void onError(Throwable t) {
-        if (!(t instanceof RxException)) {
-            placesScreen.onErrorRetrievingPlaces(R.string.general_error_retrieving_places);
-            return;
-        }
-
         if (((RxException) t).isUnAuthorizedPermissionError()) {
             placesScreen.requestLocationPermission();
         } else {
             placesScreen.onErrorRetrievingPlaces(((RxException) t).message());
         }
-
     }
 
     @Override

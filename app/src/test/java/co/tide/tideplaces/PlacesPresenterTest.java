@@ -96,9 +96,10 @@ public class PlacesPresenterTest extends BaseTest {
         placesPresenter.showPlaces();
         testScheduler.triggerActions();
         verify(placesPresenter).onNext(listCaptor.capture());
-        Assert.assertEquals(totalPlaces, listCaptor.getValue().size());
+        Assert.assertEquals(totalPlaces
+                + 1, listCaptor.getValue().size());
         verify(placesScreen).showPlaces(listCaptor.capture());
-        Assert.assertEquals(totalPlaces, listCaptor.getValue().size());
+        Assert.assertEquals(totalPlaces + 1, listCaptor.getValue().size());
         verify(placesScreen, never()).onErrorRetrievingPlaces(anyInt());
         verify(placesPresenter, never()).onError(any(Throwable.class));
     }
@@ -145,7 +146,6 @@ public class PlacesPresenterTest extends BaseTest {
 
         Assert.assertEquals(ErrorCodes.locationError, rxExceptionCaptor.getValue().code());
         Assert.assertEquals(R.string.location_cannot_retrieved_message, rxExceptionCaptor.getValue().message());
-
 
 
     }

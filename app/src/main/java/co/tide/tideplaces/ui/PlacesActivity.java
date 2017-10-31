@@ -13,8 +13,6 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -107,9 +105,9 @@ public class PlacesActivity extends AppCompatActivity implements PlacesScreen {
         Toast.makeText(this, getString(message), Toast.LENGTH_LONG).show();
     }
 
-    @Override
-    public void showPlaces(List<Place> places) {
 
+    @Override
+    public void showPlace(Place place) {
     }
 
     @Override

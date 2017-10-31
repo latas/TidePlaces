@@ -7,7 +7,6 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 
 import java.util.ArrayList;
@@ -38,6 +37,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -61,7 +61,7 @@ public class PlacesPresenterTest extends BaseTest {
 
     ConstantParams params = getRandomParams();
 
-    ArgumentCaptor<List> listCaptor = ArgumentCaptor.forClass(List.class);
+    ArgumentCaptor<Place> placeCaptor = ArgumentCaptor.forClass(Place.class);
     ArgumentCaptor<RxException> rxExceptionCaptor = ArgumentCaptor.forClass(RxException.class);
 
 
@@ -73,20 +73,6 @@ public class PlacesPresenterTest extends BaseTest {
         placesPresenter = spy(new PlacesPresenter(placesScreen, placesRepository, schedulersProvider));
     }
 
-    @Test
-    public void presenterTest_NoPlacesReturned() {
-
-        doReturn(Observable.just(new GSPlacesResponse(Collections.<GSPlaceResult>emptyList()))).when(apiService).getPlaces(anyString(), anyString(), anyString(), anyString());
-        placesPresenter.showPlaces();
-        testScheduler.triggerActions();
-        verify(placesPresenter, never()).onNext(ArgumentMatchers.<Place>anyList());
-        verify(placesPresenter).onError(rxExceptionCaptor.capture());
-        verify(placesScreen).onErrorRetrievingPlaces(R.string.no_close_places_error);
-        verify(placesScreen, never()).showPlaces(ArgumentMatchers.<Place>anyList());
-        Assert.assertEquals(ErrorCodes.noClosePlacesError, rxExceptionCaptor.getValue().code());
-        Assert.assertEquals(R.string.no_close_places_error, rxExceptionCaptor.getValue().message());
-    }
-
 
     @Test
     public void presenterTest_RandomPlacesReturned() {
@@ -95,15 +81,12 @@ public class PlacesPresenterTest extends BaseTest {
 
         placesPresenter.showPlaces();
         testScheduler.triggerActions();
-        verify(placesPresenter).onNext(listCaptor.capture());
-        Assert.assertEquals(totalPlaces
-                + 1, listCaptor.getValue().size());
-        verify(placesScreen).showPlaces(listCaptor.capture());
-        Assert.assertEquals(totalPlaces + 1, listCaptor.getValue().size());
+        verify(placesPresenter, times(totalPlaces + 1)).onNext(any(Place.class));
+        verify(placesScreen, times(totalPlaces + 1)).showPlace(any(Place.class));
+
         verify(placesScreen, never()).onErrorRetrievingPlaces(anyInt());
         verify(placesPresenter, never()).onError(any(Throwable.class));
     }
-
 
     @Test
     public void presenterTest_HttpRequestFailed() {
@@ -112,8 +95,13 @@ public class PlacesPresenterTest extends BaseTest {
 
         placesPresenter.showPlaces();
         testScheduler.triggerActions();
-        verify(placesPresenter, never()).onNext(ArgumentMatchers.<Place>anyList());
-        verify(placesScreen, never()).showPlaces(ArgumentMatchers.<Place>anyList());
+        verify(placesPresenter).onNext(placeCaptor.capture());
+        Assert.assertEquals(true, placeCaptor.getValue().isMyLocation());
+
+
+        verify(placesScreen).showPlace(placeCaptor.capture());
+        Assert.assertEquals(true, placeCaptor.getValue().isMyLocation());
+
         verify(placesPresenter).onError(rxExceptionCaptor.capture());
         verify(placesScreen).onErrorRetrievingPlaces(R.string.general_error_retrieving_places);
         Assert.assertEquals(ErrorCodes.coomonPlacesError, rxExceptionCaptor.getValue().code());
@@ -126,9 +114,10 @@ public class PlacesPresenterTest extends BaseTest {
         doReturn(Observable.error(new RxException(new UnAuthorizedLocationError()))).when(myLocationRepository).data();
         placesPresenter.showPlaces();
         testScheduler.triggerActions();
-        verify(placesPresenter, never()).onNext(ArgumentMatchers.<Place>anyList());
+        verify(placesPresenter, never()).onNext(any(Place.class));
         verify(placesPresenter).onError(rxExceptionCaptor.capture());
         verify(placesScreen).requestLocationPermission();
+        verify(placesScreen, never()).showPlace(any(Place.class));
 
         Assert.assertEquals(ErrorCodes.unAuthorizedLocationError, rxExceptionCaptor.getValue().code());
         Assert.assertEquals(R.string.empty, rxExceptionCaptor.getValue().message());
@@ -140,7 +129,8 @@ public class PlacesPresenterTest extends BaseTest {
         doReturn(Observable.error(new RxException(new LocationError()))).when(myLocationRepository).data();
         placesPresenter.showPlaces();
         testScheduler.triggerActions();
-        verify(placesPresenter, never()).onNext(ArgumentMatchers.<Place>anyList());
+        verify(placesPresenter, never()).onNext(any(Place.class));
+
         verify(placesPresenter).onError(rxExceptionCaptor.capture());
         verify(placesScreen).onErrorRetrievingPlaces(R.string.location_cannot_retrieved_message);
 
@@ -148,6 +138,22 @@ public class PlacesPresenterTest extends BaseTest {
         Assert.assertEquals(R.string.location_cannot_retrieved_message, rxExceptionCaptor.getValue().message());
 
 
+    }
+
+    @Test
+    public void presenterTest_NoPlacesReturned() {
+
+        doReturn(Observable.just(new GSPlacesResponse(Collections.<GSPlaceResult>emptyList()))).when(apiService).getPlaces(anyString(), anyString(), anyString(), anyString());
+        placesPresenter.showPlaces();
+        testScheduler.triggerActions();
+        verify(placesPresenter).onNext(placeCaptor.capture());
+        Assert.assertEquals(true, placeCaptor.getValue().isMyLocation());
+        verify(placesPresenter).onError(rxExceptionCaptor.capture());
+        verify(placesScreen).onErrorRetrievingPlaces(R.string.no_close_places_error);
+        verify(placesScreen).showPlace(placeCaptor.capture());
+        Assert.assertEquals(true, placeCaptor.getValue().isMyLocation());
+        Assert.assertEquals(ErrorCodes.noClosePlacesError, rxExceptionCaptor.getValue().code());
+        Assert.assertEquals(R.string.no_close_places_error, rxExceptionCaptor.getValue().message());
     }
 
 

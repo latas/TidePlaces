@@ -2,8 +2,6 @@ package co.tide.tideplaces.data.interactors;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import co.tide.tideplaces.data.models.MyPlace;
@@ -19,7 +17,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.functions.Function;
 
-public class PlacesRepository implements Repository<List<Place>> {
+public class PlacesRepository implements Repository<Place> {
 
 
     private final ApiService apiService;
@@ -38,30 +36,34 @@ public class PlacesRepository implements Repository<List<Place>> {
 
 
     @Override
-    public Observable<List<Place>> data() {
+    public Observable<Place> data() {
+        
+        return locationRepository.data().flatMap(new Function<LatLng, ObservableSource<Place>>() {
+            @Override
+            public ObservableSource<Place> apply(final LatLng latLng) throws Exception {
 
-        return locationRepository.data().flatMap(new Function<LatLng, ObservableSource<List<Place>>>() {
-            @Override
-            public ObservableSource<List<Place>> apply(final LatLng latLng) throws Exception {
-                return apiService.getPlaces(latLng.latitude + "," + latLng.longitude,
-                        constantParams.radiusParam(), constantParams.typeParam(), constantParams.apiKey()).subscribeOn(provider.io())
-                        .flatMap(new Function<GSPlacesResponse, ObservableSource<List<Place>>>() {
-                            @Override
-                            public ObservableSource<List<Place>> apply(GSPlacesResponse gsPlacesResponse) throws Exception {
-                                if (gsPlacesResponse.results().isEmpty())
-                                    return Observable.error(new RxException(new NoClosePlacesError()));
-                                List<Place> places = gsPlacesResponse.map();
-                                places.add(new MyPlace(latLng));
-                                return Observable.just(places);
-                            }
-                        });
-            }
-        }).onErrorResumeNext(new Function<Throwable, ObservableSource<? extends List<Place>>>() {
-            @Override
-            public ObservableSource<List<Place>> apply(Throwable throwable) throws Exception {
-                if (throwable instanceof RxException)
-                    return Observable.error(throwable);
-                return Observable.error(new RxException(new CommonPlacesNotFoundError()));
+                return Observable.mergeDelayError(apiService.getPlaces(latLng.latitude + "," + latLng.longitude, constantParams.radiusParam(), constantParams.typeParam(), constantParams.apiKey())
+                                .flatMap(new Function<GSPlacesResponse, ObservableSource<GSPlacesResponse>>() {
+                                    @Override
+                                    public ObservableSource<GSPlacesResponse> apply(GSPlacesResponse gsPlacesResponse) throws Exception {
+                                        if (gsPlacesResponse.results().isEmpty())
+                                            return Observable.error(new RxException(new NoClosePlacesError()));
+                                        else return Observable.just(gsPlacesResponse);
+                                    }
+                                }).flatMapIterable(new Function<GSPlacesResponse, Iterable<Place>>() {
+                                    @Override
+                                    public Iterable<Place> apply(GSPlacesResponse gsPlacesResponse) throws Exception {
+                                        return gsPlacesResponse.map();
+                                    }
+                                }).onErrorResumeNext(new Function<Throwable, ObservableSource<? extends Place>>() {
+                                    @Override
+                                    public ObservableSource<? extends Place> apply(Throwable throwable) throws Exception {
+                                        if (throwable instanceof RxException)
+                                            return Observable.error(throwable);
+                                        return Observable.error(new RxException(new CommonPlacesNotFoundError()));
+                                    }
+                                }),
+                        Observable.just(new MyPlace(latLng)));
             }
         });
     }

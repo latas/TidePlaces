@@ -1,7 +1,5 @@
 package co.tide.tideplaces.presenters;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import java.util.List;
 
 import javax.inject.Inject;
@@ -32,7 +30,9 @@ public class PlacesPresenter implements Observer<List<Place>> {
 
 
     public void showPlaces() {
-        locationRepository.data().subscribeOn(provider.io()).observeOn(provider.ui()).subscribe(new Observer<LatLng>() {
+
+        placesRepository.data().subscribeOn(provider.io()).observeOn(provider.ui()).subscribe(this);
+        /*locationRepository.data().subscribeOn(provider.io()).observeOn(provider.ui()).subscribe(new Observer<LatLng>() {
             @Override
             public void onSubscribe(Disposable d) {
 
@@ -61,7 +61,7 @@ public class PlacesPresenter implements Observer<List<Place>> {
             public void onComplete() {
 
             }
-        });
+        });*/
 
     }
 
@@ -79,9 +79,14 @@ public class PlacesPresenter implements Observer<List<Place>> {
 
     @Override
     public void onError(Throwable t) {
-        if (t instanceof RxException)
-            placesScreen.onErrorRetrievingPlaces(((RxException) t).message());
-        else placesScreen.onErrorRetrievingPlaces(R.string.general_error_retrieving_places);
+        if (t instanceof RxException) {
+            if (((RxException) t).isUnAuthorizedPermissionError()) {
+                placesScreen.requestLocationPermission();
+            } else
+                placesScreen.onErrorRetrievingPlaces(((RxException) t).message());
+            return;
+        }
+        placesScreen.onErrorRetrievingPlaces(R.string.general_error_retrieving_places);
     }
 
     @Override

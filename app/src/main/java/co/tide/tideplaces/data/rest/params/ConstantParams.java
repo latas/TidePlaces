@@ -13,9 +13,21 @@ public class ConstantParams {
     final long radius;
 
     @Inject
-    public ConstantParams(@Named("apiKey")String apiKey,@Named("places_type") String type,@Named("radius")long radius) {
+    public ConstantParams(@Named("apiKey") String apiKey, @Named("places_type") String type, @Named("radius") long radius) {
         this.apiKey = apiKey;
         this.type = type;
         this.radius = radius;
+    }
+
+    public String radiusParam() {
+        return String.valueOf(radius);
+    }
+
+    public String typeParam() {
+        return type;
+    }
+
+    public String apiKey() {
+        return apiKey;
     }
 }

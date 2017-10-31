@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import co.tide.tideplaces.data.models.MyPlace;
 import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.data.models.RxException;
 import co.tide.tideplaces.data.models.error.CommonPlacesNotFoundError;
@@ -41,7 +42,7 @@ public class PlacesRepository implements Repository<List<Place>> {
 
         return locationRepository.data().flatMap(new Function<LatLng, ObservableSource<List<Place>>>() {
             @Override
-            public ObservableSource<List<Place>> apply(LatLng latLng) throws Exception {
+            public ObservableSource<List<Place>> apply(final LatLng latLng) throws Exception {
                 return apiService.getPlaces(latLng.latitude + "," + latLng.longitude,
                         constantParams.radiusParam(), constantParams.typeParam(), constantParams.apiKey()).subscribeOn(provider.io())
                         .flatMap(new Function<GSPlacesResponse, ObservableSource<List<Place>>>() {
@@ -49,7 +50,9 @@ public class PlacesRepository implements Repository<List<Place>> {
                             public ObservableSource<List<Place>> apply(GSPlacesResponse gsPlacesResponse) throws Exception {
                                 if (gsPlacesResponse.results().isEmpty())
                                     return Observable.error(new RxException(new NoClosePlacesError()));
-                                return Observable.just(gsPlacesResponse.map());
+                                List<Place> places = gsPlacesResponse.map();
+                                places.add(new MyPlace(latLng));
+                                return Observable.just(places);
                             }
                         });
             }

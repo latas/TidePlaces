@@ -1,9 +1,6 @@
 package co.tide.tideplaces.di.modules;
 
-import android.content.Context;
 import android.support.v4.app.FragmentManager;
-
-import javax.inject.Named;
 
 import co.tide.tideplaces.R;
 import co.tide.tideplaces.di.scopes.ActivityScope;
@@ -15,22 +12,13 @@ import dagger.Provides;
 @Module
 public class ActivityModule {
 
-    final Context activityContext;
+
     final PlacesActivity placesActivity;
 
 
-    public ActivityModule(Context activityContext, PlacesActivity placesActivity) {
-        this.activityContext = activityContext;
+    public ActivityModule(PlacesActivity placesActivity) {
+
         this.placesActivity = placesActivity;
-
-    }
-
-
-    @ActivityScope
-    @Provides
-    @Named("activity_context")
-    public Context context() {
-        return activityContext;
     }
 
     @ActivityScope
@@ -43,8 +31,8 @@ public class ActivityModule {
     @Provides
     public String[] tabsTitle() {
         return new String[]{
-                context().getResources().getString(R.string.tab0_title),
-                context().getResources().getString(R.string.tab1_title)
+                placesActivity.getResources().getString(R.string.tab0_title),
+                placesActivity.getResources().getString(R.string.tab1_title)
         };
     }
 
@@ -54,13 +42,10 @@ public class ActivityModule {
         return placesActivity.getSupportFragmentManager();
     }
 
-
     @ActivityScope
     @Provides
     public int[] tabsIcons() {
         return new int[]{R.drawable.list_indicator, R.drawable.map_indicator};
     }
-
-
 
 }

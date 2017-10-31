@@ -11,7 +11,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import co.tide.tideplaces.data.models.LocationPermission;
 import co.tide.tideplaces.data.models.RxException;
@@ -27,7 +26,7 @@ public class MyLocationRepository implements Repository<LatLng> {
 
 
     @Inject
-    public MyLocationRepository(@Named("activity_context") Context context, LocationPermission locationPermission) {
+    public MyLocationRepository(Context context, LocationPermission locationPermission) {
         this.context = context;
         this.locationPermission = locationPermission;
 

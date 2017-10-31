@@ -46,7 +46,7 @@ public class PlacesActivity extends AppCompatActivity implements PlacesScreen {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityComponent activityComponent = DaggerActivityComponent.builder()
-                .appComponent(((TideApp) getApplication()).component()).activityModule(new ActivityModule(this, this)).build();
+                .appComponent(((TideApp) getApplication()).component()).activityModule(new ActivityModule(this)).build();
         activityComponent.inject(this);
 
         setContentView(R.layout.activity_places);

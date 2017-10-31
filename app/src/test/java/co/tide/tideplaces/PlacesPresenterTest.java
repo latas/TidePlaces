@@ -67,7 +67,7 @@ public class PlacesPresenterTest extends BaseTest {
         initMocks(this);
         doReturn(Observable.just(new LatLng(10.0, 10.0))).when(myLocationRepository).data();
         placesRepository = spy(new PlacesRepository(apiService, params, schedulersProvider,myLocationRepository));
-        placesPresenter = spy(new PlacesPresenter(placesScreen, placesRepository, myLocationRepository, schedulersProvider));
+        placesPresenter = spy(new PlacesPresenter(placesScreen, placesRepository,  schedulersProvider));
     }
 
     @Test

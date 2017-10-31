@@ -43,7 +43,7 @@ public class PlacesRepository implements Repository<List<Place>> {
         return locationRepository.data().flatMap(new Function<LatLng, ObservableSource<List<Place>>>() {
             @Override
             public ObservableSource<List<Place>> apply(LatLng latLng) throws Exception {
-                return apiService.getPlaces(latLng.latitude + "," + latLng.longitude, constantParams.radiusParam(), constantParams.typeParam(), constantParams.apiKey())
+                return apiService.getPlaces(latLng.latitude + "," + latLng.longitude, constantParams.radiusParam(), constantParams.typeParam(), constantParams.apiKey()).subscribeOn(provider.io())
                         .flatMap(new Function<GSPlacesResponse, ObservableSource<List<Place>>>() {
                             @Override
                             public ObservableSource<List<Place>> apply(GSPlacesResponse gsPlacesResponse) throws Exception {

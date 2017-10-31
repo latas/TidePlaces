@@ -5,7 +5,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import co.tide.tideplaces.R;
-import co.tide.tideplaces.data.interactors.MyLocationRepository;
 import co.tide.tideplaces.data.interactors.PlacesRepository;
 import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.data.models.RxException;
@@ -16,53 +15,21 @@ import io.reactivex.disposables.Disposable;
 
 public class PlacesPresenter implements Observer<List<Place>> {
     final PlacesRepository placesRepository;
-    final MyLocationRepository locationRepository;
+
     final PlacesScreen placesScreen;
     final BaseSchedulerProvider provider;
 
     @Inject
-    public PlacesPresenter(PlacesScreen placesScreen, PlacesRepository placesRepository, MyLocationRepository locationRepository, BaseSchedulerProvider provider) {
+    public PlacesPresenter(PlacesScreen placesScreen, PlacesRepository placesRepository, BaseSchedulerProvider provider) {
         this.placesRepository = placesRepository;
         this.placesScreen = placesScreen;
-        this.locationRepository = locationRepository;
+
         this.provider = provider;
     }
 
 
     public void showPlaces() {
-
         placesRepository.data().subscribeOn(provider.io()).observeOn(provider.ui()).subscribe(this);
-        /*locationRepository.data().subscribeOn(provider.io()).observeOn(provider.ui()).subscribe(new Observer<LatLng>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
-            @Override
-            public void onNext(LatLng latLng) {
-
-                placesRepository.nearby(latLng).data().subscribeOn(provider.io()).observeOn(provider.ui()).subscribe(PlacesPresenter.this);
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                if (!(e instanceof RxException)) {
-                    placesScreen.onErrorRetrievingPlaces(R.string.general_error_retrieving_places);
-                    return;
-                }
-                if (((RxException) e).isUnAuthorizedPermissionError()) {
-                    placesScreen.requestLocationPermission();
-                } else
-                    placesScreen.onErrorRetrievingPlaces(((RxException) e).message());
-
-            }
-
-            @Override
-            public void onComplete() {
-
-            }
-        });*/
-
     }
 
 
@@ -79,14 +46,17 @@ public class PlacesPresenter implements Observer<List<Place>> {
 
     @Override
     public void onError(Throwable t) {
-        if (t instanceof RxException) {
-            if (((RxException) t).isUnAuthorizedPermissionError()) {
-                placesScreen.requestLocationPermission();
-            } else
-                placesScreen.onErrorRetrievingPlaces(((RxException) t).message());
+        if (!(t instanceof RxException)) {
+            placesScreen.onErrorRetrievingPlaces(R.string.general_error_retrieving_places);
             return;
         }
-        placesScreen.onErrorRetrievingPlaces(R.string.general_error_retrieving_places);
+
+        if (((RxException) t).isUnAuthorizedPermissionError()) {
+            placesScreen.requestLocationPermission();
+        } else {
+            placesScreen.onErrorRetrievingPlaces(((RxException) t).message());
+        }
+
     }
 
     @Override

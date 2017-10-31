@@ -1,7 +1,6 @@
 package co.tide.tideplaces.di.components;
 
-import co.tide.tideplaces.data.rest.ApiService;
-import co.tide.tideplaces.data.rest.params.ConstantParams;
+import co.tide.tideplaces.data.interactors.PlacesRepository;
 import co.tide.tideplaces.di.modules.ApplicationModule;
 import co.tide.tideplaces.di.modules.NetworkModule;
 import co.tide.tideplaces.di.modules.ParamsModule;
@@ -16,8 +15,6 @@ public interface AppComponent {
 
     BaseSchedulerProvider scheduler();
 
-    ApiService service();
-
-    ConstantParams exposeParams();
+    PlacesRepository placesRepository();
 
 }

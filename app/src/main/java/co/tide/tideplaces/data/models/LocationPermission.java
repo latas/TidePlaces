@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * BeatTestProject-Android
@@ -18,7 +17,7 @@ public class LocationPermission {
     final Context context;
 
     @Inject
-    public LocationPermission(@Named("activity_context") Context context) {
+    public LocationPermission(Context context) {
         this.context = context;
     }
 

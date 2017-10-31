@@ -109,14 +109,13 @@ public class PlacesActivity extends AppCompatActivity implements PlacesScreen {
 
     @Override
     public void showPlaces(List<Place> places) {
-        
+
     }
 
     @Override
     public void onErrorRetrievingPlaces(int message) {
         Toast.makeText(this, getString(message), Toast.LENGTH_LONG).show();
     }
-
 }
 
 

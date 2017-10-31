@@ -5,6 +5,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import co.tide.tideplaces.data.models.Place;
+import co.tide.tideplaces.data.models.Venue;
 
 /**
  * Created by Antonis Latas
@@ -29,7 +30,7 @@ public class GSPlaceResult {
     }
 
     public Place map() {
-        return new Place(id, name, new LatLng(geometry.lat, geometry.lng));
+        return new Venue(id, name, new LatLng(geometry.lat, geometry.lng));
     }
 
 }

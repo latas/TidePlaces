@@ -28,6 +28,7 @@ public class PlacesPresenter implements Observer<List<Place>> {
 
 
     public void showPlaces() {
+        placesScreen.showProgress();
         placesRepository.data().subscribeOn(provider.io()).observeOn(provider.ui()).subscribe(this);
     }
 
@@ -39,6 +40,7 @@ public class PlacesPresenter implements Observer<List<Place>> {
 
     @Override
     public void onNext(List<Place> places) {
+        placesScreen.hideProgress();
         placesScreen.showPlaces(places);
     }
 
@@ -50,6 +52,7 @@ public class PlacesPresenter implements Observer<List<Place>> {
         } else {
             placesScreen.onErrorRetrievingPlaces(((RxException) t).message());
         }
+        placesScreen.hideProgress();
     }
 
     @Override

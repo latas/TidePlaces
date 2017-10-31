@@ -9,6 +9,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.List;
@@ -34,6 +36,8 @@ public class PlacesActivity extends AppCompatActivity implements PlacesScreen {
     TabLayout tabLayout;
     @BindView(R.id.viewpager)
     ViewPager viewPager;
+    @BindView(R.id.progress)
+    ProgressBar progressBar;
 
     @Inject
     PlacesPresenter placesPresenter;
@@ -80,6 +84,16 @@ public class PlacesActivity extends AppCompatActivity implements PlacesScreen {
     }
 
     @Override
+    public void showProgress() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgress() {
+        progressBar.setVisibility(View.GONE);
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -95,11 +109,15 @@ public class PlacesActivity extends AppCompatActivity implements PlacesScreen {
 
     @Override
     public void showPlaces(List<Place> places) {
-
+        
     }
 
     @Override
     public void onErrorRetrievingPlaces(int message) {
         Toast.makeText(this, getString(message), Toast.LENGTH_LONG).show();
     }
+
 }
+
+
+

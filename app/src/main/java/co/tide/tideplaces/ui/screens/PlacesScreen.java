@@ -11,4 +11,8 @@ public interface PlacesScreen {
 
     void requestLocationPermission();
 
+    void showProgress();
+
+    void hideProgress();
+
 }

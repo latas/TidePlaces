@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import co.tide.tideplaces.R;
 import co.tide.tideplaces.data.interactors.PlacesRepository;
 import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.data.models.RxException;
@@ -15,7 +16,6 @@ import io.reactivex.disposables.Disposable;
 public class PlacesPresenter implements Observer<List<Place>> {
 
     final PlacesRepository placesRepository;
-
     final PlacesScreen placesScreen;
     final BaseSchedulerProvider provider;
 
@@ -23,7 +23,6 @@ public class PlacesPresenter implements Observer<List<Place>> {
     public PlacesPresenter(PlacesScreen placesScreen, PlacesRepository placesRepository, BaseSchedulerProvider provider) {
         this.placesRepository = placesRepository;
         this.placesScreen = placesScreen;
-
         this.provider = provider;
     }
 
@@ -42,17 +41,21 @@ public class PlacesPresenter implements Observer<List<Place>> {
     @Override
     public void onNext(List<Place> places) {
         placesScreen.hideProgress();
-        placesScreen.showPlace(places);
+        placesScreen.showPlaces(places);
     }
 
 
     @Override
     public void onError(Throwable t) {
-        if (((RxException) t).isUnAuthorizedPermissionError()) {
-            placesScreen.requestLocationPermission();
-        } else {
-            placesScreen.onErrorRetrievingPlaces(((RxException) t).message());
-        }
+        if (t instanceof RxException) {
+            if (((RxException) t).isUnAuthorizedPermissionError()) {
+                placesScreen.requestLocationPermission();
+            } else {
+                placesScreen.onErrorRetrievingPlaces(((RxException) t).message());
+            }
+        } else
+            placesScreen.onErrorRetrievingPlaces(R.string.general_error_retrieving_places);
+
         placesScreen.hideProgress();
     }
 

@@ -9,11 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import co.tide.tideplaces.R;
-import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.data.models.PlacesView;
+import co.tide.tideplaces.presenters.ListPlacesPresenter;
+import co.tide.tideplaces.presenters.PlacesViewPresenter;
 
 
 public class PlacesListFragment extends Fragment implements PlacesView {
+    ListPlacesPresenter presenter = new ListPlacesPresenter();
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -21,8 +23,9 @@ public class PlacesListFragment extends Fragment implements PlacesView {
         return view;
     }
 
-    @Override
-    public void onPlace(Place place) {
 
+    @Override
+    public PlacesViewPresenter presenter() {
+        return presenter;
     }
 }

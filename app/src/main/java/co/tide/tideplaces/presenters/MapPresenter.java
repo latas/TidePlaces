@@ -1,7 +1,5 @@
 package co.tide.tideplaces.presenters;
 
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -15,14 +13,14 @@ import co.tide.tideplaces.rxscheduler.BaseSchedulerProvider;
 import co.tide.tideplaces.ui.screens.UiMap;
 import io.reactivex.functions.Consumer;
 
-public class MapPresenter implements Consumer<GoogleMap> {
+public class MapPresenter implements Consumer<GoogleMap>, PlacesViewPresenter {
 
 
     final MapView mapView;
     final UiMap map;
     final BaseSchedulerProvider provider;
 
-    List<Place> places = new ArrayList<>();
+    List<Place> mapPlaces = new ArrayList<>();
 
     public MapPresenter(MapView mapView, UiMap map, BaseSchedulerProvider provider) {
         this.mapView = mapView;
@@ -37,29 +35,36 @@ public class MapPresenter implements Consumer<GoogleMap> {
     @Override
     public void accept(GoogleMap googleMap) throws Exception {
         map.onMapLoaded(googleMap);
-        if (places.size() == 0)
+        if (mapPlaces.isEmpty())
             return;
-        for (Place place : places) {
-            map.addPlace(place);
-        }
-        map.zoomInBounds(cameraUpdate());
+        showPlaces();
+        map.zoomInBounds(bounds());
     }
 
-    private CameraUpdate cameraUpdate() {
+
+    private LatLngBounds bounds() {
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        for (Place place : places) {
+        for (Place place : mapPlaces) {
             builder.include(place.location());
         }
 
-        return CameraUpdateFactory.newLatLngBounds(builder.build(), 100);
+        return builder.build();
     }
 
 
-    public void onPlace(Place place) {
-        places.add(place);
+    public void onPlaces(List<Place> places) {
+        mapPlaces.addAll(places);
         if (map.isLoaded()) {
-            map.addPlace(place);
-            map.zoomInBounds(cameraUpdate());
+            showPlaces();
+            map.zoomInBounds(bounds());
+        }
+    }
+
+    private void showPlaces() {
+        for (Place place : mapPlaces) {
+            if (place.isMyLocation())
+                map.addMyPoi(place.location());
+            else map.addPoi(place.location(), place.name(), place.distanceFromAnchor());
         }
     }
 }

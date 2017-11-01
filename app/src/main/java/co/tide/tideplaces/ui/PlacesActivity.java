@@ -18,6 +18,8 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -131,10 +133,11 @@ public class PlacesActivity extends AppCompatActivity implements PlacesScreen {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+
     @Override
-    public void showPlace(Place place) {
+    public void showPlaces(List<Place> places) {
         for (PlacesView placesView : adapter.placesViews()) {
-            placesView.onPlace(place);
+            placesView.presenter().onPlaces(places);
         }
     }
 

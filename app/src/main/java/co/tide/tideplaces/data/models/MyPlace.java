@@ -28,4 +28,9 @@ public class MyPlace implements Place {
     public boolean isMyLocation() {
         return true;
     }
+
+    @Override
+    public Float distanceFromAnchor() {
+        return 0f;
+    }
 }

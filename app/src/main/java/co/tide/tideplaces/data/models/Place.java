@@ -10,4 +10,6 @@ public interface Place {
     String name();
 
     boolean isMyLocation();
+
+    Float distanceFromAnchor();
 }

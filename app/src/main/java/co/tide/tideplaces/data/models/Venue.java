@@ -6,11 +6,22 @@ public class Venue implements Place {
     final String id;
     final LatLng location;
     final String name;
+    final Float distance;
 
     public Venue(String id, String name, LatLng location) {
+        this(id, name, location, 0f);
+    }
+
+
+    public Venue(Place place, Float distance) {
+        this(place.id(), place.name(), place.location(), distance);
+    }
+
+    public Venue(String id, String name, LatLng location, Float distance) {
         this.id = id;
         this.location = location;
         this.name = name;
+        this.distance = distance;
     }
 
 
@@ -32,5 +43,10 @@ public class Venue implements Place {
     @Override
     public boolean isMyLocation() {
         return false;
+    }
+
+    @Override
+    public Float distanceFromAnchor() {
+        return distance;
     }
 }

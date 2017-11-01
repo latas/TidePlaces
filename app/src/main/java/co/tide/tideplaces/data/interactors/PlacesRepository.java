@@ -4,9 +4,11 @@ import com.google.android.gms.maps.model.LatLng;
 
 import javax.inject.Inject;
 
+import co.tide.tideplaces.data.models.GeoDistance;
 import co.tide.tideplaces.data.models.MyPlace;
 import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.data.models.RxException;
+import co.tide.tideplaces.data.models.Venue;
 import co.tide.tideplaces.data.models.error.CommonPlacesNotFoundError;
 import co.tide.tideplaces.data.models.error.NoClosePlacesError;
 import co.tide.tideplaces.data.responses.GSPlacesResponse;
@@ -48,7 +50,13 @@ public class PlacesRepository implements Repository<Place> {
                                     public Observable<Place> apply(GSPlacesResponse gsPlacesResponse) throws Exception {
                                         if (gsPlacesResponse.results().isEmpty())
                                             return Observable.error(new RxException(new NoClosePlacesError()));
-                                        else return Observable.fromIterable(gsPlacesResponse.map());
+                                        else
+                                            return Observable.fromIterable(gsPlacesResponse.map());
+                                    }
+                                }).map(new Function<Place, Place>() {
+                                    @Override
+                                    public Place apply(Place place) throws Exception {
+                                        return new Venue(place, new GeoDistance(latLng, place.location()).meters());
                                     }
                                 }).onErrorResumeNext(new Function<Throwable, ObservableSource<? extends Place>>() {
                                     @Override

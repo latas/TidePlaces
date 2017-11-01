@@ -83,7 +83,8 @@ public class PlacesMapFragment extends Fragment implements UiMap {
     public void addPoi(LatLng location, String title, float distance) {
         googleMap.addMarker(new MarkerOptions()
                 .position(location)
-                .snippet(title + " " + distance)
+                .title(title)
+                .snippet(distance + "m")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
     }
 

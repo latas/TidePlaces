@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -69,6 +70,11 @@ public class PlacesMapFragment extends Fragment implements UiMap, PlacesView {
     @Override
     public boolean isLoaded() {
         return googleMap != null;
+    }
+
+    @Override
+    public void zoomInBounds(CameraUpdate cameraUpdate) {
+        googleMap.moveCamera(cameraUpdate);
     }
 
 

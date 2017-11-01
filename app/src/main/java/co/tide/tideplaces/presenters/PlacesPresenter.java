@@ -39,8 +39,8 @@ public class PlacesPresenter implements Observer<Place> {
 
     @Override
     public void onNext(Place place) {
-            placesScreen.hideProgress();
-            placesScreen.showPlace(place);
+        placesScreen.hideProgress();
+        placesScreen.showPlace(place);
     }
 
 

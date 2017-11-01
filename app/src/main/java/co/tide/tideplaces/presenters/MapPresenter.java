@@ -1,7 +1,10 @@
 package co.tide.tideplaces.presenters;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,14 +37,29 @@ public class MapPresenter implements Consumer<GoogleMap> {
     @Override
     public void accept(GoogleMap googleMap) throws Exception {
         map.onMapLoaded(googleMap);
+        if (places.size() == 0)
+            return;
         for (Place place : places) {
             map.addPlace(place);
         }
+        map.zoomInBounds(cameraUpdate());
     }
+
+    private CameraUpdate cameraUpdate() {
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (Place place : places) {
+            builder.include(place.location());
+        }
+
+        return CameraUpdateFactory.newLatLngBounds(builder.build(), 100);
+    }
+
 
     public void onPlace(Place place) {
         places.add(place);
-        if (map.isLoaded())
+        if (map.isLoaded()) {
             map.addPlace(place);
+            map.zoomInBounds(cameraUpdate());
+        }
     }
 }

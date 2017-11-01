@@ -12,7 +12,6 @@ import dagger.Provides;
 @Module
 public class ActivityModule {
 
-
     final PlacesActivity placesActivity;
 
 
@@ -23,7 +22,7 @@ public class ActivityModule {
 
     @ActivityScope
     @Provides
-    public PlacesScreen locationScreen() {
+    public PlacesScreen placesScreen() {
         return placesActivity;
     }
 
@@ -47,5 +46,6 @@ public class ActivityModule {
     public int[] tabsIcons() {
         return new int[]{R.drawable.list_indicator, R.drawable.map_indicator};
     }
+
 
 }

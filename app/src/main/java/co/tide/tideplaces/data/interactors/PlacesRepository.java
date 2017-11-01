@@ -41,7 +41,6 @@ public class PlacesRepository implements Repository<Place> {
         return locationRepository.data().flatMap(new Function<LatLng, ObservableSource<Place>>() {
             @Override
             public ObservableSource<Place> apply(final LatLng latLng) throws Exception {
-
                 return Observable.mergeDelayError(apiService.getPlaces(latLng.latitude + "," + latLng.longitude, constantParams.radiusParam(), constantParams.typeParam(), constantParams.apiKey())
                                 .subscribeOn(provider.io())
                                 .flatMap(new Function<GSPlacesResponse, Observable<Place>>() {

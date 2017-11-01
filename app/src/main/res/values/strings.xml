@@ -13,5 +13,6 @@
     <string name="general_error_retrieving_places">Error retrieving places</string>
     <string name="no_close_places_error">No close bars. Try move to another location!</string>
     <string name="places_type" translatable="false">bar</string>
+    <string name="permission_denied_dialog_msg">You have to accept location permission to use this app properly</string>
 
 </resources>

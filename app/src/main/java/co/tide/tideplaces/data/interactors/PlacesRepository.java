@@ -37,23 +37,19 @@ public class PlacesRepository implements Repository<Place> {
 
     @Override
     public Observable<Place> data() {
-        
+
         return locationRepository.data().flatMap(new Function<LatLng, ObservableSource<Place>>() {
             @Override
             public ObservableSource<Place> apply(final LatLng latLng) throws Exception {
 
                 return Observable.mergeDelayError(apiService.getPlaces(latLng.latitude + "," + latLng.longitude, constantParams.radiusParam(), constantParams.typeParam(), constantParams.apiKey())
-                                .flatMap(new Function<GSPlacesResponse, ObservableSource<GSPlacesResponse>>() {
+                                .subscribeOn(provider.io())
+                                .flatMap(new Function<GSPlacesResponse, Observable<Place>>() {
                                     @Override
-                                    public ObservableSource<GSPlacesResponse> apply(GSPlacesResponse gsPlacesResponse) throws Exception {
+                                    public Observable<Place> apply(GSPlacesResponse gsPlacesResponse) throws Exception {
                                         if (gsPlacesResponse.results().isEmpty())
                                             return Observable.error(new RxException(new NoClosePlacesError()));
-                                        else return Observable.just(gsPlacesResponse);
-                                    }
-                                }).flatMapIterable(new Function<GSPlacesResponse, Iterable<Place>>() {
-                                    @Override
-                                    public Iterable<Place> apply(GSPlacesResponse gsPlacesResponse) throws Exception {
-                                        return gsPlacesResponse.map();
+                                        else return Observable.fromIterable(gsPlacesResponse.map());
                                     }
                                 }).onErrorResumeNext(new Function<Throwable, ObservableSource<? extends Place>>() {
                                     @Override

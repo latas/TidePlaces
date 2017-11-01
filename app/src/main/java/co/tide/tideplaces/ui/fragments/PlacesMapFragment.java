@@ -1,8 +1,9 @@
 package co.tide.tideplaces.ui.fragments;
 
 
-import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.presenters.MapPresenter;
 import co.tide.tideplaces.presenters.PlacesPresenter;
 import co.tide.tideplaces.rxscheduler.SchedulerProvider;
+import co.tide.tideplaces.ui.PlacesActivity;
 import co.tide.tideplaces.ui.screens.UiMap;
 
 
@@ -38,6 +40,19 @@ public class PlacesMapFragment extends Fragment implements UiMap {
 
     @Inject
     PlacesPresenter presenter;
+
+    @Override
+    public void onAttach(Context context) {
+        ((PlacesActivity) context).component().inject(this);
+        super.onAttach(context);
+    }
+
+    @Override
+    public void onDetach() {
+        presenter.removeUiDelegate(this);
+        super.onDetach();
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

@@ -40,6 +40,11 @@ public class PlacesListFragment extends Fragment implements ListScreen {
         super.onAttach(context);
     }
 
+    @Override
+    public void onDetach() {
+        presenter.removeUiDelegate(this);
+        super.onDetach();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -48,13 +53,6 @@ public class PlacesListFragment extends Fragment implements ListScreen {
 
         presenter.addUiDelegate(this);
         return view;
-    }
-
-
-    @Override
-    public void onDetach() {
-        presenter.removeUiDelegate(this);
-        super.onDetach();
     }
 
 

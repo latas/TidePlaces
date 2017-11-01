@@ -18,24 +18,20 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.tide.tideplaces.R;
 import co.tide.tideplaces.TideApp;
-import co.tide.tideplaces.data.models.Place;
-import co.tide.tideplaces.data.models.PlacesView;
 import co.tide.tideplaces.di.components.ActivityComponent;
 import co.tide.tideplaces.di.components.DaggerActivityComponent;
 import co.tide.tideplaces.di.modules.ActivityModule;
 import co.tide.tideplaces.presenters.PlacesPresenter;
 import co.tide.tideplaces.ui.adapters.ViewPagerAdapter;
-import co.tide.tideplaces.ui.screens.PlacesScreen;
+import co.tide.tideplaces.ui.screens.Screen;
 
-public class PlacesActivity extends AppCompatActivity implements PlacesScreen {
+public class PlacesActivity extends AppCompatActivity implements Screen {
     private final int PERMISSIONS_REQUEST_CODE = 22;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -51,11 +47,12 @@ public class PlacesActivity extends AppCompatActivity implements PlacesScreen {
     ViewPagerAdapter adapter;
     @Inject
     int[] tabIcons;
+    private ActivityComponent activityComponent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityComponent activityComponent = DaggerActivityComponent.builder()
+         activityComponent = DaggerActivityComponent.builder()
                 .appComponent(((TideApp) getApplication()).component()).activityModule(new ActivityModule(this)).build();
         activityComponent.inject(this);
 
@@ -135,15 +132,12 @@ public class PlacesActivity extends AppCompatActivity implements PlacesScreen {
 
 
     @Override
-    public void showPlaces(List<Place> places) {
-        for (PlacesView placesView : adapter.placesViews()) {
-            placesView.presenter().onPlaces(places);
-        }
-    }
-
-    @Override
     public void onErrorRetrievingPlaces(int message) {
         Toast.makeText(this, getString(message), Toast.LENGTH_LONG).show();
+    }
+
+    public ActivityComponent component() {
+        return activityComponent;
     }
 }
 

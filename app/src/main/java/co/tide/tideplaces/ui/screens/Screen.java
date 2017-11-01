@@ -4,8 +4,7 @@ import java.util.List;
 
 import co.tide.tideplaces.data.models.Place;
 
-public interface PlacesScreen {
-    void showPlaces(List<Place> places);
+public interface Screen {
 
     void onErrorRetrievingPlaces(int message);
 

@@ -8,19 +8,21 @@ import co.tide.tideplaces.R;
 import co.tide.tideplaces.data.interactors.PlacesRepository;
 import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.data.models.RxException;
+import co.tide.tideplaces.di.scopes.ActivityScope;
 import co.tide.tideplaces.rxscheduler.BaseSchedulerProvider;
-import co.tide.tideplaces.ui.screens.PlacesScreen;
+import co.tide.tideplaces.ui.screens.Screen;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
+@ActivityScope
 public class PlacesPresenter implements Observer<List<Place>> {
 
     final PlacesRepository placesRepository;
-    final PlacesScreen placesScreen;
+    final Screen placesScreen;
     final BaseSchedulerProvider provider;
 
     @Inject
-    public PlacesPresenter(PlacesScreen placesScreen, PlacesRepository placesRepository, BaseSchedulerProvider provider) {
+    public PlacesPresenter(Screen placesScreen, PlacesRepository placesRepository, BaseSchedulerProvider provider) {
         this.placesRepository = placesRepository;
         this.placesScreen = placesScreen;
         this.provider = provider;
@@ -41,7 +43,6 @@ public class PlacesPresenter implements Observer<List<Place>> {
     @Override
     public void onNext(List<Place> places) {
         placesScreen.hideProgress();
-        placesScreen.showPlaces(places);
     }
 
 

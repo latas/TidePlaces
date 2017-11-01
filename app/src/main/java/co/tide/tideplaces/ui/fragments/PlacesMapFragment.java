@@ -1,6 +1,7 @@
 package co.tide.tideplaces.ui.fragments;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -15,12 +16,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.tide.tideplaces.R;
 import co.tide.tideplaces.presenters.MapPresenter;
-import co.tide.tideplaces.presenters.PlacesViewPresenter;
+import co.tide.tideplaces.presenters.PlacesPresenter;
 import co.tide.tideplaces.rxscheduler.SchedulerProvider;
+import co.tide.tideplaces.ui.PlacesActivity;
 import co.tide.tideplaces.ui.screens.UiMap;
 
 
@@ -31,6 +35,16 @@ public class PlacesMapFragment extends Fragment implements UiMap {
     MapPresenter mapPresenter;
     GoogleMap googleMap;
 
+
+    @Inject
+    PlacesPresenter presenter;
+
+    @Override
+    public void onAttach(Context context) {
+        ((PlacesActivity) context).component().inject(this);
+        super.onAttach(context);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.map_fragment_layout, container, false);
@@ -38,6 +52,7 @@ public class PlacesMapFragment extends Fragment implements UiMap {
         mapView.onCreate(savedInstanceState);
         mapPresenter = new MapPresenter(mapView, this, new SchedulerProvider());
         mapPresenter.loadMap();
+        System.out.println("ppppp " + presenter);
         return view;
     }
 
@@ -89,8 +104,4 @@ public class PlacesMapFragment extends Fragment implements UiMap {
     }
 
 
-    @Override
-    public PlacesViewPresenter presenter() {
-        return mapPresenter;
-    }
 }

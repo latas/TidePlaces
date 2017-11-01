@@ -5,7 +5,7 @@ import android.support.v4.app.FragmentManager;
 import co.tide.tideplaces.R;
 import co.tide.tideplaces.di.scopes.ActivityScope;
 import co.tide.tideplaces.ui.PlacesActivity;
-import co.tide.tideplaces.ui.screens.PlacesScreen;
+import co.tide.tideplaces.ui.screens.Screen;
 import dagger.Module;
 import dagger.Provides;
 
@@ -22,7 +22,7 @@ public class ActivityModule {
 
     @ActivityScope
     @Provides
-    public PlacesScreen placesScreen() {
+    public Screen placesScreen() {
         return placesActivity;
     }
 

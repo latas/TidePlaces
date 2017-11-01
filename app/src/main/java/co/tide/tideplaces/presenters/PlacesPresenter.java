@@ -50,7 +50,7 @@ public class PlacesPresenter implements Observer<List<Place>> {
         placesScreen.hideProgress();
         this.places.addAll(places);
         for (DataScreen dataScreen : dataScreens) {
-            dataScreen.showData(places);
+            dataScreen.onPlacesReceived(places);
         }
     }
 
@@ -76,7 +76,7 @@ public class PlacesPresenter implements Observer<List<Place>> {
 
     public void addUiDelegate(DataScreen dataScreen) {
         dataScreens.add(dataScreen);
-        dataScreen.showData(places);
+        dataScreen.onPlacesReceived(places);
     }
 
     public void removeUiDelegate(DataScreen dataScreen) {

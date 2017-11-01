@@ -13,7 +13,7 @@ import co.tide.tideplaces.rxscheduler.BaseSchedulerProvider;
 import co.tide.tideplaces.ui.screens.UiMap;
 import io.reactivex.functions.Consumer;
 
-public class MapPresenter implements Consumer<GoogleMap>, PlacesViewPresenter {
+public class MapPresenter implements Consumer<GoogleMap>, UiPresenter {
 
 
     final MapView mapView;
@@ -52,7 +52,7 @@ public class MapPresenter implements Consumer<GoogleMap>, PlacesViewPresenter {
     }
 
 
-    public void onPlaces(List<Place> places) {
+    public void presentDataToUi(List<Place> places) {
         mapPlaces.addAll(places);
         if (map.isLoaded()) {
             showPlaces();

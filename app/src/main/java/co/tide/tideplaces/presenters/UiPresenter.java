@@ -4,7 +4,7 @@ import java.util.List;
 
 import co.tide.tideplaces.data.models.Place;
 
-public interface PlacesViewPresenter {
+public interface UiPresenter {
 
-    void onPlaces(List<Place> places);
+    void presentDataToUi(List<Place> places);
 }

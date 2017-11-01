@@ -38,7 +38,7 @@ public class PlacesMapFragment extends Fragment implements UiMap {
 
     @Inject
     PlacesPresenter presenter;
-    
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.map_fragment_layout, container, false);
@@ -99,7 +99,9 @@ public class PlacesMapFragment extends Fragment implements UiMap {
 
 
     @Override
-    public void showData(List<Place> places) {
-        mapPresenter.onPlaces(places);
+    public void onPlacesReceived(List<Place> places) {
+        mapPresenter.presentDataToUi(places);
     }
+
+
 }

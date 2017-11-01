@@ -14,14 +14,14 @@ import co.tide.tideplaces.data.models.Venue;
 public class GSPlaceResult {
     @SerializedName("id")
     @Expose
-    public String id;
+    public final String id;
     @SerializedName("name")
     @Expose
-    public String name;
+    public final String name;
 
     @SerializedName("geometry")
     @Expose
-    public PlaceResponseGeometry geometry;
+    public final PlaceResponseGeometry geometry;
 
     public GSPlaceResult(String id, String name, PlaceResponseGeometry geometry) {
         this.geometry = geometry;
@@ -30,7 +30,7 @@ public class GSPlaceResult {
     }
 
     public Place map() {
-        return new Venue(id, name, new LatLng(geometry.lat, geometry.lng));
+        return new Venue(id, name, new LatLng(geometry.gsPlaceLocation.lat, geometry.gsPlaceLocation.lng));
     }
 
 }

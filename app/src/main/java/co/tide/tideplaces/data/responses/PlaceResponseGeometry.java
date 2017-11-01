@@ -8,16 +8,13 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class PlaceResponseGeometry {
-    @SerializedName("lat")
-    @Expose
-    public final double lat;
-    @SerializedName("lng")
-    @Expose
-    public final double lng;
 
-    public PlaceResponseGeometry(double lat, double lng) {
-        this.lat = lat;
-        this.lng = lng;
+    @SerializedName("location")
+    @Expose
+   final GSPlaceLocation gsPlaceLocation;
+
+    public PlaceResponseGeometry(GSPlaceLocation gsPlaceLocation) {
+        this.gsPlaceLocation = gsPlaceLocation;
     }
 }
 

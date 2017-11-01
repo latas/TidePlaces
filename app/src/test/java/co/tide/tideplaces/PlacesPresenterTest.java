@@ -21,6 +21,7 @@ import co.tide.tideplaces.data.models.RxException;
 import co.tide.tideplaces.data.models.error.ErrorCodes;
 import co.tide.tideplaces.data.models.error.LocationError;
 import co.tide.tideplaces.data.models.error.UnAuthorizedLocationError;
+import co.tide.tideplaces.data.responses.GSPlaceLocation;
 import co.tide.tideplaces.data.responses.GSPlaceResult;
 import co.tide.tideplaces.data.responses.GSPlacesResponse;
 import co.tide.tideplaces.data.responses.PlaceResponseGeometry;
@@ -160,7 +161,7 @@ public class PlacesPresenterTest extends BaseTest {
     private List<GSPlaceResult> getRandomPlaces() {
         List<GSPlaceResult> placeResults = new ArrayList<>();
         for (int i = 0; i < totalPlaces; i++) {
-            placeResults.add(new GSPlaceResult("" + i, "name" + i, new PlaceResponseGeometry(15.0, 15.0)));
+            placeResults.add(new GSPlaceResult("" + i, "name" + i, new PlaceResponseGeometry(new GSPlaceLocation(15.0, 15.0))));
         }
         return placeResults;
     }

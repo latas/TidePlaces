@@ -1,5 +1,7 @@
 package co.tide.tideplaces.presenters;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import co.tide.tideplaces.data.interactors.PlacesRepository;
@@ -10,7 +12,7 @@ import co.tide.tideplaces.ui.screens.PlacesScreen;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
-public class PlacesPresenter implements Observer<Place> {
+public class PlacesPresenter implements Observer<List<Place>> {
 
     final PlacesRepository placesRepository;
 
@@ -38,9 +40,9 @@ public class PlacesPresenter implements Observer<Place> {
     }
 
     @Override
-    public void onNext(Place place) {
+    public void onNext(List<Place> places) {
         placesScreen.hideProgress();
-        placesScreen.showPlace(place);
+        placesScreen.showPlace(places);
     }
 
 

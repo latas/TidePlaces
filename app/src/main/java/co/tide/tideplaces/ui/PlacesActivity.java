@@ -25,6 +25,7 @@ import butterknife.ButterKnife;
 import co.tide.tideplaces.R;
 import co.tide.tideplaces.TideApp;
 import co.tide.tideplaces.data.models.Place;
+import co.tide.tideplaces.data.models.PlacesView;
 import co.tide.tideplaces.di.components.ActivityComponent;
 import co.tide.tideplaces.di.components.DaggerActivityComponent;
 import co.tide.tideplaces.di.modules.ActivityModule;
@@ -132,6 +133,9 @@ public class PlacesActivity extends AppCompatActivity implements PlacesScreen {
 
     @Override
     public void showPlace(Place place) {
+        for (PlacesView placesView : adapter.placesViews()) {
+            placesView.onPlace(place);
+        }
     }
 
     @Override

@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import co.tide.tideplaces.R;
+import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.data.models.PlacesView;
 
 
@@ -21,7 +22,7 @@ public class PlacesListFragment extends Fragment implements PlacesView {
     }
 
     @Override
-    public void showPlaces() {
+    public void onPlace(Place place) {
 
     }
 }

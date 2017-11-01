@@ -9,38 +9,36 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.tide.tideplaces.R;
+import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.data.models.PlacesView;
 import co.tide.tideplaces.presenters.MapPresenter;
 import co.tide.tideplaces.rxscheduler.SchedulerProvider;
 import co.tide.tideplaces.ui.screens.UiMap;
 
 
-public class PlacesMapFragment extends Fragment implements UiMap, PlacesView, OnMapReadyCallback {
+public class PlacesMapFragment extends Fragment implements UiMap, PlacesView {
 
     @BindView(R.id.mapView)
     MapView mapView;
-
+    MapPresenter mapPresenter;
+    GoogleMap googleMap;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.map_fragment_layout, container, false);
         ButterKnife.bind(this, view);
         mapView.onCreate(savedInstanceState);
-        new MapPresenter(mapView, this,new SchedulerProvider()).loadMap();
-
+        mapPresenter = new MapPresenter(mapView, this, new SchedulerProvider());
+        mapPresenter.loadMap();
         return view;
     }
 
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
-    }
 
     @Override
     public void onResume() {
@@ -57,12 +55,25 @@ public class PlacesMapFragment extends Fragment implements UiMap, PlacesView, On
 
     @Override
     public void onMapLoaded(GoogleMap googleMap) {
+        this.googleMap = googleMap;
+    }
 
+    @Override
+    public void addPlace(Place place) {
+        googleMap.addMarker(new MarkerOptions()
+                .position(place.location())
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+
+    }
+
+    @Override
+    public boolean isLoaded() {
+        return googleMap != null;
     }
 
 
     @Override
-    public void showPlaces() {
-
+    public void onPlace(Place place) {
+        mapPresenter.onPlace(place);
     }
 }

@@ -1,5 +1,6 @@
 package co.tide.tideplaces.presenters;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -10,6 +11,7 @@ import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.data.models.RxException;
 import co.tide.tideplaces.di.scopes.ActivityScope;
 import co.tide.tideplaces.rxscheduler.BaseSchedulerProvider;
+import co.tide.tideplaces.ui.screens.DataScreen;
 import co.tide.tideplaces.ui.screens.Screen;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -20,6 +22,8 @@ public class PlacesPresenter implements Observer<List<Place>> {
     final PlacesRepository placesRepository;
     final Screen placesScreen;
     final BaseSchedulerProvider provider;
+    final List<Place> places = new ArrayList<>();
+    final List<DataScreen> dataScreens = new ArrayList<>();
 
     @Inject
     public PlacesPresenter(Screen placesScreen, PlacesRepository placesRepository, BaseSchedulerProvider provider) {
@@ -29,7 +33,8 @@ public class PlacesPresenter implements Observer<List<Place>> {
     }
 
 
-    public void showPlaces() {
+    public void retrievePlaces() {
+        places.clear();
         placesScreen.showProgress();
         placesRepository.data().subscribeOn(provider.io()).observeOn(provider.ui(), true).subscribe(this);
     }
@@ -43,6 +48,10 @@ public class PlacesPresenter implements Observer<List<Place>> {
     @Override
     public void onNext(List<Place> places) {
         placesScreen.hideProgress();
+        this.places.addAll(places);
+        for (DataScreen dataScreen : dataScreens) {
+            dataScreen.showData(places);
+        }
     }
 
 
@@ -63,5 +72,14 @@ public class PlacesPresenter implements Observer<List<Place>> {
     @Override
     public void onComplete() {
 
+    }
+
+    public void addUiDelegate(DataScreen dataScreen) {
+        dataScreens.add(dataScreen);
+        dataScreen.showData(places);
+    }
+
+    public void removeUiDelegate(DataScreen dataScreen) {
+        dataScreens.remove(dataScreen);
     }
 }

@@ -4,9 +4,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
-import co.tide.tideplaces.data.models.PlacesView;
-
-public interface UiMap extends PlacesView {
+public interface UiMap extends DataScreen {
     void onMapLoaded(GoogleMap googleMap);
 
     void addMyPoi(LatLng latLng);

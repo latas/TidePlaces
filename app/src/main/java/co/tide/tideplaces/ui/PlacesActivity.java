@@ -51,23 +51,19 @@ public class PlacesActivity extends AppCompatActivity implements Screen {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-         activityComponent = DaggerActivityComponent.builder()
+        activityComponent = DaggerActivityComponent.builder()
                 .appComponent(((TideApp) getApplication()).component()).activityModule(new ActivityModule(this)).build();
         activityComponent.inject(this);
-
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_places);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setTitle(getResources().getString(R.string.toolbar_title));
         viewPager.setAdapter(adapter);
-
         tabLayout.setupWithViewPager(viewPager);
         addTabIcons();
-
-
-        placesPresenter.showPlaces();
+        placesPresenter.retrievePlaces();
 
     }
 
@@ -102,7 +98,7 @@ public class PlacesActivity extends AppCompatActivity implements Screen {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults.length > 0
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            placesPresenter.showPlaces();
+            placesPresenter.retrievePlaces();
         } else {
             showPermissionsDeniedDialog();
         }
@@ -126,7 +122,7 @@ public class PlacesActivity extends AppCompatActivity implements Screen {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PERMISSIONS_REQUEST_CODE)
-            placesPresenter.showPlaces();
+            placesPresenter.retrievePlaces();
         super.onActivityResult(requestCode, resultCode, data);
     }
 

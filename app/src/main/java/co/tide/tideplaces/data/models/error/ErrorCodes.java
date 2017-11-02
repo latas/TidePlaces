@@ -7,5 +7,5 @@ public class ErrorCodes {
     public static int locationError = 24;
     public static int noPlacesAvailableError = 33;
     public static int noClosePlacesError = 44;
-    public static int coomonPlacesError = 11;
+
 }

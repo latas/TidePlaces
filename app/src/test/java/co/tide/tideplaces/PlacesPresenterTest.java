@@ -61,7 +61,6 @@ public class PlacesPresenterTest extends BaseTest {
     PlacesPresenter placesPresenter;
     PlacesRepository placesRepository;
 
-
     ConstantParams params = getRandomParams();
 
 
@@ -87,7 +86,7 @@ public class PlacesPresenterTest extends BaseTest {
         testScheduler.triggerActions();
         verify(placesPresenter, times(2)).onNext(ArgumentMatchers.<Place>anyList());
         verify(screen).showProgress();
-        verify(screen, times(2)).hideProgress();
+        verify(screen, times(1)).hideProgress();
         verifyNoMoreInteractions(screen);
         verify(placesPresenter, never()).onError(any(Throwable.class));
 
@@ -159,7 +158,7 @@ public class PlacesPresenterTest extends BaseTest {
         verify(placesPresenter).onError(rxExceptionCaptor.capture());
         verify(screen).onErrorRetrievingPlaces(R.string.no_close_places_error);
         verify(screen).showProgress();
-        verify(screen, times(2)).hideProgress();
+        verify(screen, times(1)).hideProgress();
         Assert.assertEquals(ErrorCodes.noClosePlacesError, rxExceptionCaptor.getValue().code());
         Assert.assertEquals(R.string.no_close_places_error, rxExceptionCaptor.getValue().message());
     }

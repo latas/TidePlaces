@@ -46,7 +46,8 @@ public class PlacesPresenter implements Observer<List<Place>> {
 
     @Override
     public void onNext(List<Place> places) {
-        placesScreen.hideProgress();
+        if (places.size() > 1 && !places.get(0).isMyLocation())
+            placesScreen.hideProgress();
         this.places.addAll(places);
         for (UiPresenter uiPresenter : uiPresenters) {
             uiPresenter.presentDataToUi(places);

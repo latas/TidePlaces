@@ -12,7 +12,6 @@ import co.tide.tideplaces.data.models.MyPlace;
 import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.data.models.RxException;
 import co.tide.tideplaces.data.models.Venue;
-import co.tide.tideplaces.data.models.error.CommonPlacesNotFoundError;
 import co.tide.tideplaces.data.models.error.NoClosePlacesError;
 import co.tide.tideplaces.data.responses.GSPlacesResponse;
 import co.tide.tideplaces.data.rest.ApiService;
@@ -65,14 +64,6 @@ public class PlacesRepository implements Repository<List<Place>> {
                                 })
                                 .toList()
                                 .toObservable()
-                                .onErrorResumeNext(new Function<Throwable, ObservableSource<? extends List<Place>>>() {
-                                    @Override
-                                    public ObservableSource<? extends List<Place>> apply(Throwable throwable) throws Exception {
-                                        if (throwable instanceof RxException)
-                                            return Observable.error(throwable);
-                                        return Observable.error(new RxException(new CommonPlacesNotFoundError()));
-                                    }
-                                })
                         , Observable.just(Arrays.asList(new Place[]{new MyPlace(latLng)})));
             }
         });

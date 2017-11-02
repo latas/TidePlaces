@@ -11,7 +11,6 @@ import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.data.models.RxException;
 import co.tide.tideplaces.di.scopes.ActivityScope;
 import co.tide.tideplaces.rxscheduler.BaseSchedulerProvider;
-import co.tide.tideplaces.ui.screens.DataScreen;
 import co.tide.tideplaces.ui.screens.Screen;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -23,7 +22,7 @@ public class PlacesPresenter implements Observer<List<Place>> {
     final Screen placesScreen;
     final BaseSchedulerProvider provider;
     final List<Place> places = new ArrayList<>();
-    final List<DataScreen> dataScreens = new ArrayList<>();
+    final List<UiPresenter> uiPresenters = new ArrayList<>();
 
     @Inject
     public PlacesPresenter(Screen placesScreen, PlacesRepository placesRepository, BaseSchedulerProvider provider) {
@@ -49,8 +48,8 @@ public class PlacesPresenter implements Observer<List<Place>> {
     public void onNext(List<Place> places) {
         placesScreen.hideProgress();
         this.places.addAll(places);
-        for (DataScreen dataScreen : dataScreens) {
-            dataScreen.onPlacesReceived(places);
+        for (UiPresenter uiPresenter : uiPresenters) {
+            uiPresenter.presentDataToUi(places);
         }
     }
 
@@ -74,12 +73,12 @@ public class PlacesPresenter implements Observer<List<Place>> {
 
     }
 
-    public void addUiDelegate(DataScreen dataScreen) {
-        dataScreens.add(dataScreen);
-        dataScreen.onPlacesReceived(places);
+    public void addUiDelegate(UiPresenter uiPresenter) {
+        uiPresenters.add(uiPresenter);
+        uiPresenter.presentDataToUi(places);
     }
 
-    public void removeUiDelegate(DataScreen dataScreen) {
-        dataScreens.remove(dataScreen);
+    public void removeUiDelegate(UiPresenter uiPresenter) {
+        uiPresenters.remove(uiPresenter);
     }
 }

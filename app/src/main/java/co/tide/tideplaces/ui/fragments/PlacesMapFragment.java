@@ -16,14 +16,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.tide.tideplaces.R;
-import co.tide.tideplaces.data.models.Place;
+import co.tide.tideplaces.data.models.MapItem;
 import co.tide.tideplaces.presenters.MapPresenter;
 import co.tide.tideplaces.presenters.PlacesPresenter;
 import co.tide.tideplaces.rxscheduler.SchedulerProvider;
@@ -49,7 +47,7 @@ public class PlacesMapFragment extends Fragment implements UiMap {
 
     @Override
     public void onDetach() {
-        presenter.removeUiDelegate(this);
+        presenter.removeUiDelegate(mapPresenter);
         super.onDetach();
     }
 
@@ -61,7 +59,7 @@ public class PlacesMapFragment extends Fragment implements UiMap {
         mapView.onCreate(savedInstanceState);
         mapPresenter = new MapPresenter(mapView, this, new SchedulerProvider());
         mapPresenter.loadMap();
-        presenter.addUiDelegate(this);
+        presenter.addUiDelegate(mapPresenter);
         return view;
     }
 
@@ -104,19 +102,11 @@ public class PlacesMapFragment extends Fragment implements UiMap {
     }
 
     @Override
-    public void addPoi(LatLng location, String title, float distance) {
+    public void addPoi(MapItem item) {
         googleMap.addMarker(new MarkerOptions()
-                .position(location)
-                .title(title)
-                .snippet(distance + "m")
+                .position(item.location)
+                .title(item.title)
+                .snippet(item.subTitle)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
     }
-
-
-    @Override
-    public void onPlacesReceived(List<Place> places) {
-        mapPresenter.presentDataToUi(places);
-    }
-
-
 }

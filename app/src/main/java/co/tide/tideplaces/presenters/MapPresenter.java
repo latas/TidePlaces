@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.tide.tideplaces.data.interactors.MapRepository;
+import co.tide.tideplaces.data.models.MapItem;
 import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.rxscheduler.BaseSchedulerProvider;
 import co.tide.tideplaces.ui.screens.UiMap;
@@ -64,7 +65,8 @@ public class MapPresenter implements Consumer<GoogleMap>, UiPresenter {
         for (Place place : mapPlaces) {
             if (place.isMyLocation())
                 map.addMyPoi(place.location());
-            else map.addPoi(place.location(), place.name(), place.distanceFromAnchor());
+            else
+                map.addPoi(new MapItem(place.location(), place.name(), place.distanceFromAnchor() + "m"));
         }
     }
 }

@@ -20,7 +20,6 @@ import javax.inject.Inject;
 
 import co.tide.tideplaces.R;
 import co.tide.tideplaces.data.models.ListItem;
-import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.presenters.ListPresenter;
 import co.tide.tideplaces.presenters.PlacesPresenter;
 import co.tide.tideplaces.presenters.UiPresenter;
@@ -42,7 +41,7 @@ public class PlacesListFragment extends Fragment implements ListScreen {
 
     @Override
     public void onDetach() {
-        presenter.removeUiDelegate(this);
+        presenter.removeUiDelegate(uiPresenter);
         super.onDetach();
     }
 
@@ -50,16 +49,12 @@ public class PlacesListFragment extends Fragment implements ListScreen {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.list_fragment_layout, container, false);
         uiPresenter = new ListPresenter(this);
-
-        presenter.addUiDelegate(this);
+        presenter.addUiDelegate(uiPresenter);
         return view;
     }
 
 
-    @Override
-    public void onPlacesReceived(List<Place> places) {
-        uiPresenter.presentDataToUi(places);
-    }
+
 
     @Override
     public void show(List<ListItem> listItems) {

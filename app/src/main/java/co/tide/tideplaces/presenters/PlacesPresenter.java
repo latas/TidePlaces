@@ -1,6 +1,5 @@
 package co.tide.tideplaces.presenters;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -14,6 +13,7 @@ import co.tide.tideplaces.rxscheduler.BaseSchedulerProvider;
 import co.tide.tideplaces.ui.screens.Screen;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.observables.ConnectableObservable;
 
 @ActivityScope
 public class PlacesPresenter implements Observer<List<Place>> {
@@ -21,8 +21,8 @@ public class PlacesPresenter implements Observer<List<Place>> {
     final PlacesRepository placesRepository;
     final Screen placesScreen;
     final BaseSchedulerProvider provider;
-    final List<Place> places = new ArrayList<>();
-    final List<UiPresenter> uiPresenters = new ArrayList<>();
+
+    ConnectableObservable<List<Place>> observable;
 
     @Inject
     public PlacesPresenter(Screen placesScreen, PlacesRepository placesRepository, BaseSchedulerProvider provider) {
@@ -33,9 +33,11 @@ public class PlacesPresenter implements Observer<List<Place>> {
 
 
     public void retrievePlaces() {
-        places.clear();
         placesScreen.showProgress();
-        placesRepository.data().subscribeOn(provider.io()).observeOn(provider.ui(), true).subscribe(this);
+        observable = placesRepository.data().subscribeOn(provider.io()).observeOn(provider.ui(), true).share().replay();
+        observable.subscribe(this);
+        observable.connect();
+
     }
 
 
@@ -48,10 +50,6 @@ public class PlacesPresenter implements Observer<List<Place>> {
     public void onNext(List<Place> places) {
         if (places.size() > 1 && !places.get(0).isMyLocation())
             placesScreen.hideProgress();
-        this.places.addAll(places);
-        for (UiPresenter uiPresenter : uiPresenters) {
-            uiPresenter.presentDataToUi(places);
-        }
     }
 
 
@@ -74,12 +72,7 @@ public class PlacesPresenter implements Observer<List<Place>> {
 
     }
 
-    public void addUiDelegate(UiPresenter uiPresenter) {
-        uiPresenters.add(uiPresenter);
-        uiPresenter.presentDataToUi(places);
-    }
-
-    public void removeUiDelegate(UiPresenter uiPresenter) {
-        uiPresenters.remove(uiPresenter);
+    public void subscribeUiObserver(Observer<List<Place>> observer) {
+        observable.subscribe(observer);
     }
 }

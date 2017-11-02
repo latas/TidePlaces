@@ -47,7 +47,6 @@ public class PlacesMapFragment extends Fragment implements UiMap {
 
     @Override
     public void onDetach() {
-        presenter.removeUiDelegate(mapPresenter);
         super.onDetach();
     }
 
@@ -59,7 +58,7 @@ public class PlacesMapFragment extends Fragment implements UiMap {
         mapView.onCreate(savedInstanceState);
         mapPresenter = new MapPresenter(mapView, this, new SchedulerProvider());
         mapPresenter.loadMap();
-        presenter.addUiDelegate(mapPresenter);
+        presenter.subscribeUiObserver(mapPresenter);
         return view;
     }
 

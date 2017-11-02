@@ -20,18 +20,19 @@ import javax.inject.Inject;
 
 import co.tide.tideplaces.R;
 import co.tide.tideplaces.data.models.ListItem;
+import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.presenters.ListPresenter;
 import co.tide.tideplaces.presenters.PlacesPresenter;
-import co.tide.tideplaces.presenters.UiPresenter;
 import co.tide.tideplaces.ui.PlacesActivity;
 import co.tide.tideplaces.ui.screens.ListScreen;
+import io.reactivex.Observer;
 
 
 public class PlacesListFragment extends Fragment implements ListScreen {
     @Inject
     PlacesPresenter presenter;
 
-    UiPresenter uiPresenter;
+    Observer<List<Place>> uiPresenter;
 
     @Override
     public void onAttach(Context context) {
@@ -41,7 +42,7 @@ public class PlacesListFragment extends Fragment implements ListScreen {
 
     @Override
     public void onDetach() {
-        presenter.removeUiDelegate(uiPresenter);
+
         super.onDetach();
     }
 
@@ -49,7 +50,7 @@ public class PlacesListFragment extends Fragment implements ListScreen {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.list_fragment_layout, container, false);
         uiPresenter = new ListPresenter(this);
-        presenter.addUiDelegate(uiPresenter);
+        presenter.subscribeUiObserver(uiPresenter);
         return view;
     }
 

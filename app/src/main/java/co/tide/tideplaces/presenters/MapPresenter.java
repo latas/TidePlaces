@@ -12,9 +12,11 @@ import co.tide.tideplaces.data.models.MapItem;
 import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.rxscheduler.BaseSchedulerProvider;
 import co.tide.tideplaces.ui.screens.UiMap;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
-public class MapPresenter implements Consumer<GoogleMap>, UiPresenter {
+public class MapPresenter implements Consumer<GoogleMap>, Observer<List<Place>> {
 
 
     final MapView mapView;
@@ -30,7 +32,7 @@ public class MapPresenter implements Consumer<GoogleMap>, UiPresenter {
     }
 
     public void loadMap() {
-        new MapRepository(mapView).data().subscribeOn(provider.ui()).subscribeOn(provider.ui()).subscribe(this);
+        new MapRepository(mapView).data().subscribe(this);
     }
 
     @Override
@@ -53,14 +55,6 @@ public class MapPresenter implements Consumer<GoogleMap>, UiPresenter {
     }
 
 
-    public void presentDataToUi(List<Place> places) {
-        mapPlaces.addAll(places);
-        if (map.isLoaded()) {
-            showPlaces();
-            map.zoomInBounds(bounds());
-        }
-    }
-
     private void showPlaces() {
         for (Place place : mapPlaces) {
             if (place.isMyLocation())
@@ -68,5 +62,29 @@ public class MapPresenter implements Consumer<GoogleMap>, UiPresenter {
             else
                 map.addPoi(new MapItem(place.location(), place.name(), place.distanceFromAnchor() + "m"));
         }
+    }
+
+    @Override
+    public void onSubscribe(Disposable d) {
+
+    }
+
+    @Override
+    public void onNext(List<Place> places) {
+        mapPlaces.addAll(places);
+        if (map.isLoaded()) {
+            showPlaces();
+            map.zoomInBounds(bounds());
+        }
+    }
+
+    @Override
+    public void onError(Throwable e) {
+
+    }
+
+    @Override
+    public void onComplete() {
+
     }
 }

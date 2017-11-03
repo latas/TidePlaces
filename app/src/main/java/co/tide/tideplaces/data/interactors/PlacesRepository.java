@@ -2,7 +2,7 @@ package co.tide.tideplaces.data.interactors;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -64,7 +64,7 @@ public class PlacesRepository implements Repository<List<Place>> {
                                 })
                                 .toList()
                                 .toObservable()
-                        , Observable.just(Arrays.asList(new Place[]{new MyPlace(latLng)})));
+                        , Observable.just(Collections.<Place>singletonList(new MyPlace(latLng))));
             }
         });
     }

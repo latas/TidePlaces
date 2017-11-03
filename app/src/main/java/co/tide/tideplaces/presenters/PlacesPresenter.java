@@ -12,6 +12,7 @@ import co.tide.tideplaces.di.scopes.ActivityScope;
 import co.tide.tideplaces.rxscheduler.BaseSchedulerProvider;
 import co.tide.tideplaces.ui.screens.Screen;
 import io.reactivex.Observer;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observables.ConnectableObservable;
 
@@ -23,6 +24,7 @@ public class PlacesPresenter implements Observer<List<Place>> {
     final BaseSchedulerProvider provider;
 
     ConnectableObservable<List<Place>> observable;
+    CompositeDisposable disposable = new CompositeDisposable();
 
     @Inject
     public PlacesPresenter(Screen placesScreen, PlacesRepository placesRepository, BaseSchedulerProvider provider) {
@@ -43,13 +45,14 @@ public class PlacesPresenter implements Observer<List<Place>> {
 
     @Override
     public void onSubscribe(Disposable d) {
-
+        disposable.add(disposable);
     }
 
     @Override
     public void onNext(List<Place> places) {
-        if (places.size() >= 1 && !places.get(0).isMyLocation())
-            placesScreen.hideProgress();
+        if (!disposable.isDisposed())
+            if (places.size() >= 1 && !places.get(0).isMyLocation())
+                placesScreen.hideProgress();
     }
 
 
@@ -74,5 +77,9 @@ public class PlacesPresenter implements Observer<List<Place>> {
 
     public void subscribeUiObserver(Observer<List<Place>> observer) {
         observable.subscribe(observer);
+    }
+
+    public void drain() {
+        disposable.clear();
     }
 }

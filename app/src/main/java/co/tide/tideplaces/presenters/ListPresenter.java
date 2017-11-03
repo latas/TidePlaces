@@ -9,10 +9,12 @@ import co.tide.tideplaces.data.models.ListItem;
 import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.ui.screens.ListScreen;
 import io.reactivex.Observer;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
 public class ListPresenter implements Observer<List<Place>> {
     final ListScreen listScreen;
+    final CompositeDisposable disposables = new CompositeDisposable();
 
 
     public ListPresenter(ListScreen listScreen) {
@@ -22,7 +24,7 @@ public class ListPresenter implements Observer<List<Place>> {
 
     @Override
     public void onSubscribe(Disposable d) {
-
+        disposables.add(d);
     }
 
     @Override
@@ -49,5 +51,9 @@ public class ListPresenter implements Observer<List<Place>> {
     @Override
     public void onComplete() {
 
+    }
+
+    public void drain() {
+        disposables.clear();
     }
 }

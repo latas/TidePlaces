@@ -135,6 +135,12 @@ public class PlacesActivity extends AppCompatActivity implements Screen {
     public ActivityComponent component() {
         return activityComponent;
     }
+
+    @Override
+    protected void onDestroy() {
+        placesPresenter.drain();
+        super.onDestroy();
+    }
 }
 
 

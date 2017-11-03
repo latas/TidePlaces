@@ -70,6 +70,7 @@ public class PlacesMapFragment extends Fragment implements UiMap {
 
     @Override
     public void onDestroy() {
+        mapPresenter.drain();
         mapView.onDestroy();
         super.onDestroy();
     }

@@ -31,7 +31,7 @@ public class MapPresenter implements Consumer<GoogleMap>, Observer<List<Place>> 
     }
 
     public void loadMap() {
-        new MapRepository(mapView).data().subscribe(this);
+        disposables.add(new MapRepository(mapView).data().subscribe(this));
     }
 
     @Override

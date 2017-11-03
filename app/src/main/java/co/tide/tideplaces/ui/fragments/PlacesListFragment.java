@@ -24,13 +24,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.tide.tideplaces.R;
 import co.tide.tideplaces.data.models.ListItem;
-import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.presenters.ListPresenter;
 import co.tide.tideplaces.presenters.PlacesPresenter;
 import co.tide.tideplaces.ui.PlacesActivity;
 import co.tide.tideplaces.ui.adapters.ListAdapter;
 import co.tide.tideplaces.ui.screens.ListScreen;
-import io.reactivex.Observer;
 
 
 public class PlacesListFragment extends Fragment implements ListScreen {
@@ -43,7 +41,7 @@ public class PlacesListFragment extends Fragment implements ListScreen {
     RecyclerView list;
 
 
-    Observer<List<Place>> uiPresenter;
+    ListPresenter listPresenter;
 
     @Override
     public void onAttach(Context context) {
@@ -61,8 +59,8 @@ public class PlacesListFragment extends Fragment implements ListScreen {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.list_fragment_layout, container, false);
         ButterKnife.bind(this, view);
-        uiPresenter = new ListPresenter(this);
-        presenter.subscribeUiObserver(uiPresenter);
+        listPresenter = new ListPresenter(this);
+        presenter.subscribeUiObserver(listPresenter);
         list.setHasFixedSize(true);
         list.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         listAdapter = new ListAdapter(getActivity());
@@ -81,5 +79,11 @@ public class PlacesListFragment extends Fragment implements ListScreen {
         String uri = String.format(Locale.ENGLISH, "geo:%f,%f", location.latitude, location.longitude);
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
         getActivity().startActivity(intent);
+    }
+
+    @Override
+    public void onDestroy() {
+        listPresenter.drain();
+        super.onDestroy();
     }
 }

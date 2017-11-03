@@ -5,7 +5,6 @@ import com.google.android.gms.maps.model.LatLng;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
 import java.util.ArrayList;
@@ -50,8 +49,7 @@ public class PlacesRepositoryTest extends BaseTest {
     ConstantParams params = randomParams();
     PlacesRepository repository;
     TestObserver<List<Place>> testObserver;
-    ArgumentCaptor<List<Place>> listCaptor1 = ArgumentCaptor.forClass(ArrayList.class);
-    ArgumentCaptor<List<Place>> listCaptor2 = ArgumentCaptor.forClass(ArrayList.class);
+
     private int totalPlaces = 20;
     private LatLng myLocation = new LatLng(10.0, 10.0);
 

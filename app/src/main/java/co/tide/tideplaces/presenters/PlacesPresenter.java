@@ -48,7 +48,7 @@ public class PlacesPresenter implements Observer<List<Place>> {
 
     @Override
     public void onNext(List<Place> places) {
-        if (places.size() > 1 && !places.get(0).isMyLocation())
+        if (places.size() >= 1 && !places.get(0).isMyLocation())
             placesScreen.hideProgress();
     }
 

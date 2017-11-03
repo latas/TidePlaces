@@ -4,7 +4,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.LatLngBounds;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import co.tide.tideplaces.data.interactors.MapRepository;
@@ -23,7 +22,6 @@ public class MapPresenter implements Consumer<GoogleMap>, Observer<List<Place>> 
     final UiMap map;
     final BaseSchedulerProvider provider;
 
-    List<Place> mapPlaces = new ArrayList<>();
 
     public MapPresenter(MapView mapView, UiMap map, BaseSchedulerProvider provider) {
         this.mapView = mapView;
@@ -38,31 +36,19 @@ public class MapPresenter implements Consumer<GoogleMap>, Observer<List<Place>> 
     @Override
     public void accept(GoogleMap googleMap) throws Exception {
         map.onMapLoaded(googleMap);
-        if (mapPlaces.isEmpty())
-            return;
-        showPlaces();
-        map.zoomInBounds(bounds());
+
     }
 
 
-    private LatLngBounds bounds() {
+    private LatLngBounds bounds(List<Place> places) {
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        for (Place place : mapPlaces) {
+        for (Place place : places) {
             builder.include(place.location());
         }
 
         return builder.build();
     }
 
-
-    private void showPlaces() {
-        for (Place place : mapPlaces) {
-            if (place.isMyLocation())
-                map.addMyPoi(place.location());
-            else
-                map.addPoi(new MapItem(place.location(), place.name(), place.distanceFromAnchor() + "m"));
-        }
-    }
 
     @Override
     public void onSubscribe(Disposable d) {
@@ -71,11 +57,13 @@ public class MapPresenter implements Consumer<GoogleMap>, Observer<List<Place>> 
 
     @Override
     public void onNext(List<Place> places) {
-        mapPlaces.addAll(places);
-        if (map.isLoaded()) {
-            showPlaces();
-            map.zoomInBounds(bounds());
+        for (Place place : places) {
+            if (place.isMyLocation())
+                map.addMyPoi(place.location());
+            else
+                map.addPoi(new MapItem(place.location(), place.name(), place.distanceFromAnchor() + "m"));
         }
+        map.zoomInBounds(bounds(places));
     }
 
     @Override

@@ -58,7 +58,6 @@ public class PlacesMapFragment extends Fragment implements UiMap {
         mapView.onCreate(savedInstanceState);
         mapPresenter = new MapPresenter(mapView, this, new SchedulerProvider());
         mapPresenter.loadMap();
-        presenter.subscribeUiObserver(mapPresenter);
         return view;
     }
 
@@ -79,6 +78,7 @@ public class PlacesMapFragment extends Fragment implements UiMap {
     @Override
     public void onMapLoaded(GoogleMap googleMap) {
         this.googleMap = googleMap;
+        presenter.subscribeUiObserver(mapPresenter);
     }
 
     @Override

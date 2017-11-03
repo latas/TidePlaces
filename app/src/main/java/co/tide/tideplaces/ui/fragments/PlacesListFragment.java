@@ -55,8 +55,6 @@ public class PlacesListFragment extends Fragment implements ListScreen {
     }
 
 
-
-
     @Override
     public void show(List<ListItem> listItems) {
 

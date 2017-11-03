@@ -13,8 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import java.util.List;
 
 import javax.inject.Inject;
@@ -54,11 +52,6 @@ public class PlacesListFragment extends Fragment implements ListScreen {
         super.onAttach(context);
     }
 
-    @Override
-    public void onDetach() {
-
-        super.onDetach();
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -86,8 +79,8 @@ public class PlacesListFragment extends Fragment implements ListScreen {
     }
 
     @Override
-    public void openGoogleMaps(LatLng location, String label) {
-        Uri uri = Uri.parse("geo:<" + location.latitude + ">,<" + location.longitude + ">?q=<" + location.latitude + ">,<" + location.longitude + ">(" + label + ")");
+    public void openGoogleMaps(Uri uri) {
+
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         getActivity().startActivity(intent);
     }

@@ -1,9 +1,11 @@
 package co.tide.tideplaces.presenters;
 
+import android.net.Uri;
 import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import co.tide.tideplaces.data.models.ListItem;
 import co.tide.tideplaces.data.models.Place;
@@ -35,7 +37,7 @@ public class ListPresenter implements Observer<List<Place>> {
                 listItems.add(new ListItem(place.name(), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        listScreen.openGoogleMaps(place.location(), place.name());
+                        listScreen.openGoogleMaps(Uri.parse(String.format(Locale.ENGLISH, "geo:<%.7f>,<%.7f>?q=<%.7f>,<%.7f>(%s)", place.location().latitude, place.location().longitude, place.location().latitude, place.location().longitude, place.name())));
                     }
                 }));
             }

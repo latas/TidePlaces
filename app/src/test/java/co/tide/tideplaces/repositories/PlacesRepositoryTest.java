@@ -80,7 +80,6 @@ public class PlacesRepositoryTest extends BaseTest {
         testObserver.assertNoErrors().assertValueAt(1, new Predicate<List<Place>>() {
             @Override
             public boolean test(List<Place> places) throws Exception {
-
                 Assert.assertEquals(expectedList2, places);
                 return true;
             }

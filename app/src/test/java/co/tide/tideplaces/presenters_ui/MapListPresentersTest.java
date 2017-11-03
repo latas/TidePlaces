@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import co.tide.tideplaces.data.models.ListItem;
 import co.tide.tideplaces.data.models.MapItem;
 import co.tide.tideplaces.data.models.MyPlace;
 import co.tide.tideplaces.data.models.Place;
@@ -52,7 +53,7 @@ public class MapListPresentersTest {
     ListPresenter listPresenter;
     ArgumentCaptor<List> mapListCaptor = ArgumentCaptor.forClass(List.class);
     ArgumentCaptor<List> listListCaptor = ArgumentCaptor.forClass(List.class);
-    ArgumentCaptor<List> listItemsListCaptor = ArgumentCaptor.forClass(List.class);
+    ArgumentCaptor<List<ListItem>> listItemsListCaptor = ArgumentCaptor.forClass(List.class);
     ArgumentCaptor<LatLng> myPosCaptor = ArgumentCaptor.forClass(LatLng.class);
 
     ArgumentCaptor<MapItem> placesCaptor = ArgumentCaptor.forClass(MapItem.class);
@@ -77,20 +78,19 @@ public class MapListPresentersTest {
         verify(map, never()).addMyPoi(myPosCaptor.capture());
         verify(map, times(totalPlaces)).addPoi(placesCaptor.capture());
 
-        Assert.assertEquals(totalPlaces, mapListCaptor.getValue().size());
-        Assert.assertEquals(totalPlaces, listListCaptor.getValue().size());
-        Assert.assertEquals(totalPlaces, listItemsListCaptor.getValue().size());
+        Assert.assertEquals(getRandomPlaces(), mapListCaptor.getValue());
+        Assert.assertEquals(getRandomPlaces(), listListCaptor.getValue());
+        assert (listItemsListCaptor.getValue().size() == totalPlaces);
 
         for (int i = 0; i < totalPlaces; i++) {
-            Assert.assertEquals(getRandomPlaces().get(i).location().latitude, placesCaptor.getAllValues().get(i).location.latitude, 0);
-            Assert.assertEquals(getRandomPlaces().get(i).location().longitude, placesCaptor.getAllValues().get(i).location.longitude, 0);
+            Assert.assertEquals(getRandomPlaces().get(i).location(), placesCaptor.getAllValues().get(i).location);
+            Assert.assertEquals(getRandomPlaces().get(i).name(), listItemsListCaptor.getValue().get(i).name());
         }
 
     }
 
     @Test
     public void testRandomPlacesIncludingMine() {
-
 
         ConnectableObservable placesObservable =
                 Observable.just(getRandomPlaces(), Collections.singletonList(myPlace())).share().replay();
@@ -108,20 +108,21 @@ public class MapListPresentersTest {
         verify(map, times(totalPlaces)).addPoi(placesCaptor.capture());
 
 
-        Assert.assertEquals(totalPlaces, mapListCaptor.getAllValues().get(0).size());
-        Assert.assertEquals(1, mapListCaptor.getAllValues().get(1).size());
+        Assert.assertEquals(getRandomPlaces(), mapListCaptor.getAllValues().get(0));
+        Assert.assertEquals(Collections.singletonList(myPlace()), mapListCaptor.getAllValues().get(1));
 
-        Assert.assertEquals(totalPlaces, listListCaptor.getAllValues().get(0).size());
-        Assert.assertEquals(1, listListCaptor.getAllValues().get(1).size());
 
-        Assert.assertEquals(totalPlaces, listItemsListCaptor.getAllValues().get(0).size());
-        Assert.assertEquals(0, listItemsListCaptor.getAllValues().get(1).size());
+        Assert.assertEquals(getRandomPlaces(), listListCaptor.getAllValues().get(0));
+        Assert.assertEquals(Collections.singletonList(myPlace()), listListCaptor.getAllValues().get(1));
+
+        assert (listItemsListCaptor.getAllValues().get(0).size() == totalPlaces);
+        assert (listItemsListCaptor.getAllValues().get(1).isEmpty());
 
         Assert.assertEquals(myPlace().location(), myPosCaptor.getValue());
 
-
         for (int i = 0; i < totalPlaces; i++) {
             Assert.assertEquals(getRandomPlaces().get(i).location(), placesCaptor.getAllValues().get(i).location);
+            Assert.assertEquals(getRandomPlaces().get(i).name(), listItemsListCaptor.getAllValues().get(0).get(i).name());
         }
 
     }
@@ -215,10 +216,10 @@ public class MapListPresentersTest {
         verify(map, never()).addPoi(any(MapItem.class));
         verify(map).addMyPoi(myPosCaptor.capture());
 
-        Assert.assertEquals(1, listListCaptor.getValue().size());
-        Assert.assertEquals(1, mapListCaptor.getValue().size());
-        assert (listItemsListCaptor.getValue().isEmpty());
+        Assert.assertEquals(Collections.singletonList(myPlace()), listListCaptor.getValue());
+        Assert.assertEquals(Collections.singletonList(myPlace()), mapListCaptor.getValue());
         Assert.assertEquals(myPlace().location(), myPosCaptor.getValue());
+        assert (listItemsListCaptor.getValue().isEmpty());
 
 
     }

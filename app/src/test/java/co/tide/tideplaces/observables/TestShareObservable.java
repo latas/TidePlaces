@@ -1,14 +1,10 @@
 package co.tide.tideplaces.observables;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import co.tide.tideplaces.data.models.Place;
-import co.tide.tideplaces.data.models.Venue;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -23,21 +19,21 @@ import static org.mockito.Mockito.verify;
 
 public class TestShareObservable {
 
-    Observer<Place> observer1, observer2;
+    Observer<TestObject> observer1, observer2;
 
-    ArgumentCaptor<Place> placeObserver1Captor = ArgumentCaptor.forClass(Place.class);
-    ArgumentCaptor<Place> placeObserver2Captor = ArgumentCaptor.forClass(Place.class);
+    ArgumentCaptor<TestObject> placeObserver1Captor = ArgumentCaptor.forClass(TestObject.class);
+    ArgumentCaptor<TestObject> placeObserver2Captor = ArgumentCaptor.forClass(TestObject.class);
 
     @Before
     public void setUp() {
-        observer1 = spy(new Observer<Place>() {
+        observer1 = spy(new Observer<TestObject>() {
             @Override
             public void onSubscribe(Disposable d) {
 
             }
 
             @Override
-            public void onNext(Place place) {
+            public void onNext(TestObject place) {
 
             }
 
@@ -52,14 +48,14 @@ public class TestShareObservable {
             }
         });
 
-        observer2 = spy(new Observer<Place>() {
+        observer2 = spy(new Observer<TestObject>() {
             @Override
             public void onSubscribe(Disposable d) {
 
             }
 
             @Override
-            public void onNext(Place o) {
+            public void onNext(TestObject o) {
 
             }
 
@@ -77,7 +73,7 @@ public class TestShareObservable {
 
     @Test
     public void testShareObservable() {
-        ConnectableObservable observable = Observable.just(new Venue("id", "name", new LatLng(10, 10))).share().replay();
+        ConnectableObservable observable = Observable.just(new TestObject()).share().replay();
         observable.subscribeWith(observer1);
         observable.connect();
         observable.subscribeWith(observer2);
@@ -88,4 +84,7 @@ public class TestShareObservable {
     }
 
 
+    private class TestObject {
+
+    }
 }

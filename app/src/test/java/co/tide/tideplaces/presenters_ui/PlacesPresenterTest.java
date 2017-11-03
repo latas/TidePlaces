@@ -12,6 +12,7 @@ import org.mockito.Mock;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import co.tide.tideplaces.BaseTest;
@@ -104,7 +105,8 @@ public class PlacesPresenterTest extends BaseTest {
         verify(screen).hideProgress();
         verify(screen).onErrorRetrievingPlaces(R.string.general_error_retrieving_places);
         verifyNoMoreInteractions(screen);
-        Assert.assertEquals(1, listCaptor.getValue().size());
+        Assert.assertEquals(Collections.singletonList(new MyPlace(myLocation)), listCaptor.getValue());
+
     }
 
 

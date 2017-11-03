@@ -19,7 +19,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Module(includes = ApplicationModule.class)
 public class NetworkModule {
 
-
     @Provides
     @AppScope
     public OkHttpClient okHttpClient() {

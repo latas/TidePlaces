@@ -15,33 +15,23 @@ import io.reactivex.Observable;
 @Module
 public class ActivityModule {
 
-    final PlacesActivity placesActivity;
-    final Observable<PermissionsAcceptedEvent> observable;
-
-
-    public ActivityModule(PlacesActivity placesActivity, Observable<PermissionsAcceptedEvent> observable) {
-
-        this.placesActivity = placesActivity;
-        this.observable = observable;
-    }
-
     @ActivityScope
     @Provides
-    public Screen placesScreen() {
+    public Screen placesScreen(PlacesActivity placesActivity) {
         return placesActivity;
     }
 
 
     @ActivityScope
     @Provides
-    public Observable<PermissionsAcceptedEvent> observable() {
-        return observable;
+    public Observable<PermissionsAcceptedEvent> observable(PlacesActivity placesActivity) {
+        return placesActivity.observable;
     }
 
 
     @ActivityScope
     @Provides
-    public String[] tabsTitle() {
+    public String[] tabsTitle(PlacesActivity placesActivity) {
         return new String[]{
                 placesActivity.getResources().getString(R.string.tab0_title),
                 placesActivity.getResources().getString(R.string.tab1_title)
@@ -50,7 +40,7 @@ public class ActivityModule {
 
     @ActivityScope
     @Provides
-    public FragmentManager fragmentManager() {
+    public FragmentManager fragmentManager(PlacesActivity placesActivity) {
         return placesActivity.getSupportFragmentManager();
     }
 

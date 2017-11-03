@@ -23,11 +23,12 @@ import butterknife.ButterKnife;
 import co.tide.tideplaces.R;
 import co.tide.tideplaces.data.events.PermissionsAcceptedEvent;
 import co.tide.tideplaces.data.models.MapItem;
+import co.tide.tideplaces.presenters.MapLoaderPresenter;
 import co.tide.tideplaces.presenters.MapPresenter;
 import co.tide.tideplaces.presenters.PlacesPresenter;
 import co.tide.tideplaces.rxscheduler.SchedulerProvider;
-import co.tide.tideplaces.ui.PlacesActivity;
 import co.tide.tideplaces.ui.screens.UiMap;
+import dagger.android.support.AndroidSupportInjection;
 import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
 
@@ -45,9 +46,11 @@ public class PlacesMapFragment extends Fragment implements UiMap {
     @Inject
     Observable<PermissionsAcceptedEvent> permissionsObservable;
 
+    MapLoaderPresenter mapLoaderPresenter;
+
     @Override
     public void onAttach(Context context) {
-        ((PlacesActivity) context).component().inject(this);
+        AndroidSupportInjection.inject(this);
         super.onAttach(context);
     }
 
@@ -62,6 +65,7 @@ public class PlacesMapFragment extends Fragment implements UiMap {
         View view = inflater.inflate(R.layout.map_fragment_layout, container, false);
         ButterKnife.bind(this, view);
         mapView.onCreate(savedInstanceState);
+
         mapPresenter = new MapPresenter(mapView, this, new SchedulerProvider());
         mapPresenter.loadMap();
         permissionsObservable.subscribe(new Consumer<PermissionsAcceptedEvent>() {

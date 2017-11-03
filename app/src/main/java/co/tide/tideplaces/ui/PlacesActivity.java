@@ -10,6 +10,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -23,18 +24,18 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.tide.tideplaces.R;
-import co.tide.tideplaces.TideApp;
 import co.tide.tideplaces.data.events.PermissionsAcceptedEvent;
-import co.tide.tideplaces.di.components.ActivityComponent;
-import co.tide.tideplaces.di.components.DaggerActivityComponent;
-import co.tide.tideplaces.di.modules.ActivityModule;
 import co.tide.tideplaces.presenters.PlacesPresenter;
 import co.tide.tideplaces.ui.adapters.ViewPagerAdapter;
 import co.tide.tideplaces.ui.screens.Screen;
+import dagger.android.AndroidInjection;
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.support.HasSupportFragmentInjector;
 import io.reactivex.Observable;
 import io.reactivex.observables.ConnectableObservable;
 
-public class PlacesActivity extends AppCompatActivity implements Screen {
+public class PlacesActivity extends AppCompatActivity implements Screen, HasSupportFragmentInjector {
     private final int PERMISSIONS_REQUEST_CODE = 22;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -50,16 +51,23 @@ public class PlacesActivity extends AppCompatActivity implements Screen {
     ViewPagerAdapter adapter;
     @Inject
     int[] tabIcons;
-    private ActivityComponent activityComponent;
 
-    ConnectableObservable<PermissionsAcceptedEvent> observable = Observable.just(new PermissionsAcceptedEvent()).publish();
+
+    @Inject
+    DispatchingAndroidInjector<Fragment> fragmentDispatchingAndroidInjector;
+
+    @Override
+    public AndroidInjector<Fragment> supportFragmentInjector() {
+        return fragmentDispatchingAndroidInjector;
+    }
+
+    public ConnectableObservable<PermissionsAcceptedEvent> observable = Observable.just(new PermissionsAcceptedEvent()).publish();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        activityComponent = DaggerActivityComponent.builder()
-                .appComponent(((TideApp) getApplication()).component()).activityModule(new ActivityModule(this, observable)).build();
-        activityComponent.inject(this);
+        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_places);
         ButterKnife.bind(this);
@@ -141,9 +149,6 @@ public class PlacesActivity extends AppCompatActivity implements Screen {
         Toast.makeText(this, getString(message), Toast.LENGTH_LONG).show();
     }
 
-    public ActivityComponent component() {
-        return activityComponent;
-    }
 
     @Override
     protected void onDestroy() {

@@ -24,9 +24,9 @@ import co.tide.tideplaces.data.events.PermissionsAcceptedEvent;
 import co.tide.tideplaces.data.models.ListItem;
 import co.tide.tideplaces.presenters.ListPresenter;
 import co.tide.tideplaces.presenters.PlacesPresenter;
-import co.tide.tideplaces.ui.PlacesActivity;
 import co.tide.tideplaces.ui.adapters.ListAdapter;
 import co.tide.tideplaces.ui.screens.ListScreen;
+import dagger.android.support.AndroidSupportInjection;
 import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
 
@@ -48,7 +48,7 @@ public class PlacesListFragment extends Fragment implements ListScreen {
 
     @Override
     public void onAttach(Context context) {
-        ((PlacesActivity) context).component().inject(this);
+        AndroidSupportInjection.inject(this);
         super.onAttach(context);
     }
 

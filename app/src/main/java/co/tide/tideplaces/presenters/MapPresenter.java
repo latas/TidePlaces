@@ -1,43 +1,29 @@
 package co.tide.tideplaces.presenters;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.List;
 
-import co.tide.tideplaces.data.interactors.MapRepository;
+import javax.inject.Inject;
+
 import co.tide.tideplaces.data.models.MapItem;
 import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.rxscheduler.BaseSchedulerProvider;
 import co.tide.tideplaces.ui.screens.UiMap;
-import io.reactivex.Observer;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
-public class MapPresenter implements Consumer<GoogleMap>, Observer<List<Place>> {
+public class MapPresenter implements Consumer<List<Place>> {
 
 
-    final MapView mapView;
     final UiMap map;
     final BaseSchedulerProvider provider;
     final CompositeDisposable disposables = new CompositeDisposable();
 
-    public MapPresenter(MapView mapView, UiMap map, BaseSchedulerProvider provider) {
-        this.mapView = mapView;
+    @Inject
+    public MapPresenter(UiMap map, BaseSchedulerProvider provider) {
         this.map = map;
         this.provider = provider;
-    }
-
-    public void loadMap() {
-        disposables.add(new MapRepository(mapView).data().subscribe(this));
-    }
-
-    @Override
-    public void accept(GoogleMap googleMap) throws Exception {
-        map.onMapLoaded(googleMap);
-
     }
 
 
@@ -51,13 +37,12 @@ public class MapPresenter implements Consumer<GoogleMap>, Observer<List<Place>> 
     }
 
 
-    @Override
-    public void onSubscribe(Disposable d) {
-        disposables.add(d);
+    public void drain() {
+        disposables.clear();
     }
 
     @Override
-    public void onNext(List<Place> places) {
+    public void accept(List<Place> places) throws Exception {
         for (Place place : places) {
             if (place.isMyLocation())
                 map.addMyPoi(place.location());
@@ -67,19 +52,4 @@ public class MapPresenter implements Consumer<GoogleMap>, Observer<List<Place>> 
         if (places.size() > 0)
             map.zoomInBounds(bounds(places));
     }
-
-    @Override
-    public void onError(Throwable e) {
-
-    }
-
-    @Override
-    public void onComplete() {
-
-    }
-
-    public void drain() {
-        disposables.clear();
-    }
-
 }

@@ -2,12 +2,14 @@ package co.tide.tideplaces.repositories;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -15,6 +17,7 @@ import java.util.Random;
 import co.tide.tideplaces.BaseTest;
 import co.tide.tideplaces.data.interactors.MyLocationRepository;
 import co.tide.tideplaces.data.interactors.PlacesRepository;
+import co.tide.tideplaces.data.models.MyPlace;
 import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.data.models.RxException;
 import co.tide.tideplaces.data.models.error.ErrorCodes;
@@ -64,21 +67,30 @@ public class PlacesRepositoryTest extends BaseTest {
         doReturn(Observable.just(myLocation)).when(myLocationRepository).data();
         doReturn(Observable.just(new GSPlacesResponse(getRandomPlaces()))).when(apiService).getPlaces(anyString(), anyString(), anyString(), anyString());
 
+        final List<Place> expectedList1 = Collections.<Place>singletonList(new MyPlace(myLocation));
+        final List<Place> expectedList2 = new ArrayList<>();
+
+        for (int i = 0; i < getRandomPlaces().size(); i++) {
+            expectedList2.add(getRandomPlaces().get(i).map());
+        }
+
+
         repository.data().subscribe(testObserver);
         testScheduler.triggerActions();
         testObserver.assertNoErrors().assertValueAt(1, new Predicate<List<Place>>() {
             @Override
             public boolean test(List<Place> places) throws Exception {
 
-                return (places.size() == 1 && places.get(0).location().equals(myLocation)) || places.size() == getRandomPlaces().size();
+                Assert.assertEquals(expectedList2, places);
+                return true;
             }
         }).assertValueAt(0, new Predicate<List<Place>>() {
             @Override
             public boolean test(List<Place> places) throws Exception {
-
-                return (places.size() == 1 && places.get(0).location().equals(myLocation)) || places.size() == getRandomPlaces().size();
+                Assert.assertEquals(expectedList1, places);
+                return true;
             }
-        }).assertValueCount(2);
+        }).assertValueCount(2).assertValueSet(Arrays.asList(expectedList1, expectedList2));
     }
 
     @Test
@@ -90,7 +102,7 @@ public class PlacesRepositoryTest extends BaseTest {
         testObserver.assertValue(new Predicate<List<Place>>() {
             @Override
             public boolean test(List<Place> places) throws Exception {
-                return places.size() == 1 && places.get(0).location().equals(myLocation);
+                return places.size() == 1 && places.get(0).equals(new MyPlace(myLocation));
             }
         }).assertError(new Predicate<Throwable>() {
             @Override
@@ -161,7 +173,7 @@ public class PlacesRepositoryTest extends BaseTest {
         testObserver.assertError(HttpException.class).assertValue(new Predicate<List<Place>>() {
             @Override
             public boolean test(List<Place> places) throws Exception {
-                return places.size() == 1 && places.get(0).location().equals(myLocation);
+                return places.size() == 1 && places.get(0).equals(new MyPlace(myLocation));
             }
         });
     }

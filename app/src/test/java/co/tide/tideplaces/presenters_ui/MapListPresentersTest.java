@@ -117,12 +117,11 @@ public class MapListPresentersTest {
         Assert.assertEquals(totalPlaces, listItemsListCaptor.getAllValues().get(0).size());
         Assert.assertEquals(0, listItemsListCaptor.getAllValues().get(1).size());
 
-        Assert.assertEquals(myPlace().location().latitude, myPosCaptor.getValue().latitude, 0);
-        Assert.assertEquals(myPlace().location().longitude, myPosCaptor.getValue().longitude, 0);
+        Assert.assertEquals(myPlace().location(), myPosCaptor.getValue());
+
 
         for (int i = 0; i < totalPlaces; i++) {
-            Assert.assertEquals(getRandomPlaces().get(i).location().latitude, placesCaptor.getAllValues().get(i).location.latitude, 0);
-            Assert.assertEquals(getRandomPlaces().get(i).location().longitude, placesCaptor.getAllValues().get(i).location.longitude, 0);
+            Assert.assertEquals(getRandomPlaces().get(i).location(), placesCaptor.getAllValues().get(i).location);
         }
 
     }
@@ -150,10 +149,9 @@ public class MapListPresentersTest {
         Assert.assertEquals(1, listListCaptor.getValue().size());
 
         Assert.assertEquals(1, mapListCaptor.getValue().size());
-        Assert.assertEquals(0, listItemsListCaptor.getValue().size());
+        assert (listItemsListCaptor.getValue().isEmpty());
 
-        Assert.assertEquals(myPlace().location().latitude, myPosCaptor.getValue().latitude, 0);
-        Assert.assertEquals(myPlace().location().longitude, myPosCaptor.getValue().longitude, 0);
+        Assert.assertEquals(myPlace().location(), myPosCaptor.getValue());
 
 
     }
@@ -189,9 +187,11 @@ public class MapListPresentersTest {
 
         verify(map, never()).addMyPoi(any(LatLng.class));
         verify(map, never()).addPoi(any(MapItem.class));
-        Assert.assertEquals(0, mapListCaptor.getValue().size());
-        Assert.assertEquals(0, listListCaptor.getValue().size());
-        Assert.assertEquals(0, listItemsListCaptor.getValue().size());
+
+
+        assert (mapListCaptor.getValue().isEmpty());
+        assert (listListCaptor.getValue().isEmpty());
+        assert (listItemsListCaptor.getValue().isEmpty());
 
     }
 
@@ -217,10 +217,8 @@ public class MapListPresentersTest {
 
         Assert.assertEquals(1, listListCaptor.getValue().size());
         Assert.assertEquals(1, mapListCaptor.getValue().size());
-        Assert.assertEquals(0, listItemsListCaptor.getValue().size());
-
-        Assert.assertEquals(myPlace().location().latitude, myPosCaptor.getValue().latitude, 0);
-        Assert.assertEquals(myPlace().location().longitude, myPosCaptor.getValue().longitude, 0);
+        assert (listItemsListCaptor.getValue().isEmpty());
+        Assert.assertEquals(myPlace().location(), myPosCaptor.getValue());
 
 
     }

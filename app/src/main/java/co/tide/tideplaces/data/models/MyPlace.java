@@ -1,5 +1,7 @@
 package co.tide.tideplaces.data.models;
 
+import android.support.annotation.VisibleForTesting;
+
 import com.google.android.gms.maps.model.LatLng;
 
 public class MyPlace implements Place {
@@ -32,5 +34,11 @@ public class MyPlace implements Place {
     @Override
     public Float distanceFromAnchor() {
         return 0f;
+    }
+
+    @VisibleForTesting
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof MyPlace && ((MyPlace) obj).location().equals(location());
     }
 }

@@ -1,9 +1,10 @@
-package co.tide.tideplaces;
+package co.tide.tideplaces.repositories;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import co.tide.tideplaces.BaseTest;
 import co.tide.tideplaces.data.interactors.MyLocationRepository;
 import co.tide.tideplaces.data.interactors.PlacesRepository;
 import co.tide.tideplaces.data.models.Place;
@@ -39,17 +41,15 @@ public class PlacesRepositoryTest extends BaseTest {
     MyLocationRepository myLocationRepository;
     @Mock
     ApiService apiService;
-
     @Mock
     HttpException exception;
 
     ConstantParams params = randomParams();
-
-
     PlacesRepository repository;
     TestObserver<List<Place>> testObserver;
+    ArgumentCaptor<List<Place>> listCaptor1 = ArgumentCaptor.forClass(ArrayList.class);
+    ArgumentCaptor<List<Place>> listCaptor2 = ArgumentCaptor.forClass(ArrayList.class);
     private int totalPlaces = 20;
-
     private LatLng myLocation = new LatLng(10.0, 10.0);
 
     @Before
@@ -61,7 +61,6 @@ public class PlacesRepositoryTest extends BaseTest {
 
     @Test
     public void randomVenues() {
-
         doReturn(Observable.just(myLocation)).when(myLocationRepository).data();
         doReturn(Observable.just(new GSPlacesResponse(getRandomPlaces()))).when(apiService).getPlaces(anyString(), anyString(), anyString(), anyString());
 
@@ -80,7 +79,6 @@ public class PlacesRepositoryTest extends BaseTest {
                 return (places.size() == 1 && places.get(0).location().equals(myLocation)) || places.size() == getRandomPlaces().size();
             }
         }).assertValueCount(2);
-
     }
 
     @Test

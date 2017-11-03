@@ -1,4 +1,4 @@
-package co.tide.tideplaces;
+package co.tide.tideplaces.presenters_ui;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import co.tide.tideplaces.BaseTest;
+import co.tide.tideplaces.R;
 import co.tide.tideplaces.data.interactors.PlacesRepository;
 import co.tide.tideplaces.data.models.MyPlace;
 import co.tide.tideplaces.data.models.Place;
@@ -96,12 +98,13 @@ public class PlacesPresenterTest extends BaseTest {
 
         placesPresenter.retrievePlaces();
         testScheduler.triggerActions();
-        verify(placesPresenter).onNext(ArgumentMatchers.<Place>anyList());
+        verify(placesPresenter).onNext(listCaptor.capture());
         verify(placesPresenter).onError(any(Throwable.class));
         verify(screen).showProgress();
         verify(screen).hideProgress();
         verify(screen).onErrorRetrievingPlaces(R.string.general_error_retrieving_places);
         verifyNoMoreInteractions(screen);
+        Assert.assertEquals(1, listCaptor.getValue().size());
     }
 
 

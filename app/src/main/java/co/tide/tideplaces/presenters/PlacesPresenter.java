@@ -36,7 +36,7 @@ public class PlacesPresenter implements Observer<List<Place>> {
 
     public void retrievePlaces() {
         placesScreen.showProgress();
-        observable = placesRepository.data().subscribeOn(provider.io()).observeOn(provider.ui(), true).share().replay();
+        observable = (ConnectableObservable<List<Place>>) placesRepository.init().data();
         observable.subscribe(this);
         observable.connect();
 
@@ -75,11 +75,10 @@ public class PlacesPresenter implements Observer<List<Place>> {
 
     }
 
-    public void subscribeUiObserver(Observer<List<Place>> observer) {
-        observable.subscribe(observer);
-    }
 
     public void drain() {
         disposable.clear();
     }
+
+
 }

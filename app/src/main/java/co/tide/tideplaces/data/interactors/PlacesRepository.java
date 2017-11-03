@@ -16,11 +16,13 @@ import co.tide.tideplaces.data.models.error.NoClosePlacesError;
 import co.tide.tideplaces.data.responses.GSPlacesResponse;
 import co.tide.tideplaces.data.rest.ApiService;
 import co.tide.tideplaces.data.rest.params.ConstantParams;
+import co.tide.tideplaces.di.scopes.ActivityScope;
 import co.tide.tideplaces.rxscheduler.BaseSchedulerProvider;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.functions.Function;
 
+@ActivityScope
 public class PlacesRepository implements Repository<List<Place>> {
 
 
@@ -28,6 +30,7 @@ public class PlacesRepository implements Repository<List<Place>> {
     private final ConstantParams constantParams;
     private final BaseSchedulerProvider provider;
     private final MyLocationRepository locationRepository;
+    private Observable observable;
 
 
     @Inject
@@ -38,11 +41,8 @@ public class PlacesRepository implements Repository<List<Place>> {
         this.locationRepository = locationRepository;
     }
 
-
-    @Override
-    public Observable<List<Place>> data() {
-
-        return locationRepository.data().flatMap(new Function<LatLng, ObservableSource<List<Place>>>() {
+    public PlacesRepository init() {
+        this.observable = locationRepository.data().flatMap(new Function<LatLng, ObservableSource<List<Place>>>() {
             @Override
             public ObservableSource<List<Place>> apply(final LatLng latLng) throws Exception {
                 return Observable.mergeDelayError(apiService.getPlaces(latLng.latitude + "," + latLng.longitude, constantParams.radiusParam(), constantParams.typeParam(), constantParams.apiKey())
@@ -66,6 +66,12 @@ public class PlacesRepository implements Repository<List<Place>> {
                                 .toObservable()
                         , Observable.just(Collections.<Place>singletonList(new MyPlace(latLng))));
             }
-        });
+        }).subscribeOn(provider.io()).observeOn(provider.ui(), true).share().replay();
+        return this;
+    }
+
+    @Override
+    public Observable<List<Place>> data() {
+        return observable;
     }
 }

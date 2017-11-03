@@ -30,6 +30,7 @@ import co.tide.tideplaces.data.rest.ApiService;
 import co.tide.tideplaces.data.rest.params.ConstantParams;
 import io.reactivex.Observable;
 import io.reactivex.functions.Predicate;
+import io.reactivex.observables.ConnectableObservable;
 import io.reactivex.observers.TestObserver;
 import retrofit2.HttpException;
 
@@ -48,6 +49,7 @@ public class PlacesRepositoryTest extends BaseTest {
 
     ConstantParams params = randomParams();
     PlacesRepository repository;
+    ConnectableObservable observable;
     TestObserver<List<Place>> testObserver;
 
     private int totalPlaces = 20;
@@ -58,6 +60,7 @@ public class PlacesRepositoryTest extends BaseTest {
         initMocks(this);
         repository = new PlacesRepository(apiService, params, schedulersProvider, myLocationRepository);
         testObserver = new TestObserver<>();
+
     }
 
     @Test
@@ -73,7 +76,9 @@ public class PlacesRepositoryTest extends BaseTest {
         }
 
 
-        repository.data().subscribe(testObserver);
+        ConnectableObservable obs = (ConnectableObservable) repository.init().data();
+        obs.subscribeWith(testObserver);
+        obs.connect();
         testScheduler.triggerActions();
         testObserver.assertNoErrors().assertValueAt(1, new Predicate<List<Place>>() {
             @Override
@@ -94,7 +99,11 @@ public class PlacesRepositoryTest extends BaseTest {
     public void noPlacesReturned() {
         doReturn(Observable.just(new GSPlacesResponse(Collections.<GSPlaceResult>emptyList()))).when(apiService).getPlaces(anyString(), anyString(), anyString(), anyString());
         doReturn(Observable.just(myLocation)).when(myLocationRepository).data();
-        repository.data().subscribe(testObserver);
+
+
+        ConnectableObservable obs = (ConnectableObservable) repository.init().data();
+        obs.subscribeWith(testObserver);
+        obs.connect();
         testScheduler.triggerActions();
         testObserver.assertValue(new Predicate<List<Place>>() {
             @Override
@@ -115,7 +124,10 @@ public class PlacesRepositoryTest extends BaseTest {
 
         doReturn(Observable.error(new RxException(new LocationError()))).when(myLocationRepository).data();
 
-        repository.data().subscribe(testObserver);
+        ConnectableObservable obs = (ConnectableObservable) repository.init().data();
+        obs.subscribeWith(testObserver);
+        obs.connect();
+
         testScheduler.triggerActions();
         testObserver.assertError(new Predicate<Throwable>() {
             @Override
@@ -130,7 +142,9 @@ public class PlacesRepositoryTest extends BaseTest {
 
         doReturn(Observable.error(new RxException(new UnAuthorizedLocationError()))).when(myLocationRepository).data();
 
-        repository.data().subscribe(testObserver);
+        ConnectableObservable obs = (ConnectableObservable) repository.init().data();
+        obs.subscribeWith(testObserver);
+        obs.connect();
         testScheduler.triggerActions();
         testObserver.assertError(new Predicate<Throwable>() {
             @Override
@@ -145,7 +159,10 @@ public class PlacesRepositoryTest extends BaseTest {
 
         doReturn(Observable.error(new IllegalStateException())).when(myLocationRepository).data();
 
-        repository.data().subscribe(testObserver);
+
+        ConnectableObservable obs = (ConnectableObservable) repository.init().data();
+        obs.subscribeWith(testObserver);
+        obs.connect();
         testScheduler.triggerActions();
         testObserver.assertError(new Predicate<Throwable>() {
             @Override
@@ -164,7 +181,9 @@ public class PlacesRepositoryTest extends BaseTest {
         doReturn(Observable.error(exception))
                 .when(apiService).getPlaces(anyString(), anyString(), anyString(), anyString());
 
-        repository.data().subscribe(testObserver);
+        ConnectableObservable obs = (ConnectableObservable) repository.init().data();
+        obs.subscribeWith(testObserver);
+        obs.connect();
         testScheduler.triggerActions();
 
         testObserver.assertError(HttpException.class).assertValue(new Predicate<List<Place>>() {

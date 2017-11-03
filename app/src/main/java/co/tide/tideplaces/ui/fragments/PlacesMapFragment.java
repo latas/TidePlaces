@@ -25,7 +25,6 @@ import co.tide.tideplaces.data.events.PermissionsAcceptedEvent;
 import co.tide.tideplaces.data.models.MapItem;
 import co.tide.tideplaces.presenters.MapLoaderPresenter;
 import co.tide.tideplaces.presenters.MapPresenter;
-import co.tide.tideplaces.presenters.PlacesPresenter;
 import co.tide.tideplaces.rxscheduler.SchedulerProvider;
 import co.tide.tideplaces.ui.screens.UiMap;
 import dagger.android.support.AndroidSupportInjection;
@@ -37,11 +36,11 @@ public class PlacesMapFragment extends Fragment implements UiMap {
 
     @BindView(R.id.mapView)
     MapView mapView;
-    MapPresenter mapPresenter;
     GoogleMap googleMap;
 
+
     @Inject
-    PlacesPresenter presenter;
+    MapPresenter presenter;
 
     @Inject
     Observable<PermissionsAcceptedEvent> permissionsObservable;
@@ -54,11 +53,6 @@ public class PlacesMapFragment extends Fragment implements UiMap {
         super.onAttach(context);
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -66,13 +60,14 @@ public class PlacesMapFragment extends Fragment implements UiMap {
         ButterKnife.bind(this, view);
         mapView.onCreate(savedInstanceState);
 
-        mapPresenter = new MapPresenter(mapView, this, new SchedulerProvider());
-        mapPresenter.loadMap();
+        mapLoaderPresenter = new MapLoaderPresenter(mapView, this, new SchedulerProvider());
+        mapLoaderPresenter.loadMap();
+
         permissionsObservable.subscribe(new Consumer<PermissionsAcceptedEvent>() {
             @Override
             public void accept(PermissionsAcceptedEvent permissionsAcceptedEvent) throws Exception {
                 if (isLoaded())
-                    presenter.subscribeUiObserver(mapPresenter);
+                    presenter.data();
             }
         });
         return view;
@@ -87,7 +82,8 @@ public class PlacesMapFragment extends Fragment implements UiMap {
 
     @Override
     public void onDestroy() {
-        mapPresenter.drain();
+        presenter.drain();
+        mapLoaderPresenter.drain();
         mapView.onDestroy();
         super.onDestroy();
     }
@@ -103,7 +99,7 @@ public class PlacesMapFragment extends Fragment implements UiMap {
     @Override
     public void onMapLoaded(GoogleMap googleMap) {
         this.googleMap = googleMap;
-        presenter.subscribeUiObserver(mapPresenter);
+        presenter.data();
     }
 
     @Override

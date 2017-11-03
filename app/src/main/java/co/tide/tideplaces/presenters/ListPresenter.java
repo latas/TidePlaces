@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
+import co.tide.tideplaces.data.interactors.PlacesRepository;
 import co.tide.tideplaces.data.models.ListItem;
 import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.ui.screens.ListScreen;
@@ -17,12 +20,23 @@ import io.reactivex.disposables.Disposable;
 public class ListPresenter implements Observer<List<Place>> {
     final ListScreen listScreen;
     final CompositeDisposable disposables = new CompositeDisposable();
+    final PlacesRepository placesRepository;
 
-
-    public ListPresenter(ListScreen listScreen) {
+    @Inject
+    public ListPresenter(ListScreen listScreen, PlacesRepository placesRepository) {
         this.listScreen = listScreen;
+        this.placesRepository = placesRepository;
     }
 
+
+    public void drain() {
+        disposables.clear();
+    }
+
+
+    public void data() {
+        placesRepository.data().subscribe(this);
+    }
 
     @Override
     public void onSubscribe(Disposable d) {
@@ -53,9 +67,5 @@ public class ListPresenter implements Observer<List<Place>> {
     @Override
     public void onComplete() {
 
-    }
-
-    public void drain() {
-        disposables.clear();
     }
 }

@@ -23,7 +23,6 @@ import co.tide.tideplaces.R;
 import co.tide.tideplaces.data.events.PermissionsAcceptedEvent;
 import co.tide.tideplaces.data.models.ListItem;
 import co.tide.tideplaces.presenters.ListPresenter;
-import co.tide.tideplaces.presenters.PlacesPresenter;
 import co.tide.tideplaces.ui.adapters.ListAdapter;
 import co.tide.tideplaces.ui.screens.ListScreen;
 import dagger.android.support.AndroidSupportInjection;
@@ -32,8 +31,6 @@ import io.reactivex.functions.Consumer;
 
 
 public class PlacesListFragment extends Fragment implements ListScreen {
-    @Inject
-    PlacesPresenter presenter;
 
     @Inject
     Observable<PermissionsAcceptedEvent> permissionsObservable;
@@ -43,8 +40,8 @@ public class PlacesListFragment extends Fragment implements ListScreen {
     @BindView(R.id.list)
     RecyclerView list;
 
-
-    ListPresenter listPresenter;
+    @Inject
+    ListPresenter presenter;
 
     @Override
     public void onAttach(Context context) {
@@ -57,16 +54,16 @@ public class PlacesListFragment extends Fragment implements ListScreen {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.list_fragment_layout, container, false);
         ButterKnife.bind(this, view);
-        listPresenter = new ListPresenter(this);
-        presenter.subscribeUiObserver(listPresenter);
+
         list.setHasFixedSize(true);
         list.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         listAdapter = new ListAdapter(getActivity());
         list.setAdapter(listAdapter);
+        presenter.data();
         permissionsObservable.subscribe(new Consumer<PermissionsAcceptedEvent>() {
             @Override
             public void accept(PermissionsAcceptedEvent permissionsAcceptedEvent) throws Exception {
-                presenter.subscribeUiObserver(listPresenter);
+                presenter.data();
             }
         });
         return view;
@@ -87,7 +84,7 @@ public class PlacesListFragment extends Fragment implements ListScreen {
 
     @Override
     public void onDestroy() {
-        listPresenter.drain();
+        presenter.drain();
         super.onDestroy();
     }
 }

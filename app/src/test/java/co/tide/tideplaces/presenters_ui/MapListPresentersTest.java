@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import co.tide.tideplaces.data.interactors.PlacesRepository;
 import co.tide.tideplaces.data.models.ListItem;
 import co.tide.tideplaces.data.models.MapItem;
 import co.tide.tideplaces.data.models.MyPlace;
@@ -48,6 +49,8 @@ public class MapListPresentersTest {
     ListScreen screen;
     @Mock
     BaseSchedulerProvider provider;
+    @Mock
+    PlacesRepository repository;
 
     MapPresenter mapPresenter;
     ListPresenter listPresenter;
@@ -62,8 +65,8 @@ public class MapListPresentersTest {
     @Before
     public void setUp() {
         initMocks(this);
-        mapPresenter = spy(new MapPresenter(mapView, map, provider));
-        listPresenter = spy(new ListPresenter(screen));
+        mapPresenter = spy(new MapPresenter(map, provider, repository));
+        listPresenter = spy(new ListPresenter(screen, repository));
     }
 
     @Test

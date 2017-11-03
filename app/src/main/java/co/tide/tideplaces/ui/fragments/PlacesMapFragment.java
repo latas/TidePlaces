@@ -21,12 +21,15 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.tide.tideplaces.R;
+import co.tide.tideplaces.data.events.PermissionsAcceptedEvent;
 import co.tide.tideplaces.data.models.MapItem;
 import co.tide.tideplaces.presenters.MapPresenter;
 import co.tide.tideplaces.presenters.PlacesPresenter;
 import co.tide.tideplaces.rxscheduler.SchedulerProvider;
 import co.tide.tideplaces.ui.PlacesActivity;
 import co.tide.tideplaces.ui.screens.UiMap;
+import io.reactivex.Observable;
+import io.reactivex.functions.Consumer;
 
 
 public class PlacesMapFragment extends Fragment implements UiMap {
@@ -38,6 +41,9 @@ public class PlacesMapFragment extends Fragment implements UiMap {
 
     @Inject
     PlacesPresenter presenter;
+
+    @Inject
+    Observable<PermissionsAcceptedEvent> permissionsObservable;
 
     @Override
     public void onAttach(Context context) {
@@ -58,6 +64,13 @@ public class PlacesMapFragment extends Fragment implements UiMap {
         mapView.onCreate(savedInstanceState);
         mapPresenter = new MapPresenter(mapView, this, new SchedulerProvider());
         mapPresenter.loadMap();
+        permissionsObservable.subscribe(new Consumer<PermissionsAcceptedEvent>() {
+            @Override
+            public void accept(PermissionsAcceptedEvent permissionsAcceptedEvent) throws Exception {
+                if (isLoaded())
+                    presenter.subscribeUiObserver(mapPresenter);
+            }
+        });
         return view;
     }
 

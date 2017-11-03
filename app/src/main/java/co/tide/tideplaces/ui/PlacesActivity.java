@@ -24,12 +24,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.tide.tideplaces.R;
 import co.tide.tideplaces.TideApp;
+import co.tide.tideplaces.data.events.PermissionsAcceptedEvent;
 import co.tide.tideplaces.di.components.ActivityComponent;
 import co.tide.tideplaces.di.components.DaggerActivityComponent;
 import co.tide.tideplaces.di.modules.ActivityModule;
 import co.tide.tideplaces.presenters.PlacesPresenter;
 import co.tide.tideplaces.ui.adapters.ViewPagerAdapter;
 import co.tide.tideplaces.ui.screens.Screen;
+import io.reactivex.Observable;
+import io.reactivex.observables.ConnectableObservable;
 
 public class PlacesActivity extends AppCompatActivity implements Screen {
     private final int PERMISSIONS_REQUEST_CODE = 22;
@@ -49,10 +52,13 @@ public class PlacesActivity extends AppCompatActivity implements Screen {
     int[] tabIcons;
     private ActivityComponent activityComponent;
 
+    ConnectableObservable<PermissionsAcceptedEvent> observable = Observable.just(new PermissionsAcceptedEvent()).publish();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         activityComponent = DaggerActivityComponent.builder()
-                .appComponent(((TideApp) getApplication()).component()).activityModule(new ActivityModule(this)).build();
+                .appComponent(((TideApp) getApplication()).component()).activityModule(new ActivityModule(this, observable)).build();
         activityComponent.inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_places);
@@ -99,6 +105,7 @@ public class PlacesActivity extends AppCompatActivity implements Screen {
         if (grantResults.length > 0
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             placesPresenter.retrievePlaces();
+            observable.connect();
         } else {
             showPermissionsDeniedDialog();
         }
@@ -121,8 +128,10 @@ public class PlacesActivity extends AppCompatActivity implements Screen {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PERMISSIONS_REQUEST_CODE)
+        if (requestCode == PERMISSIONS_REQUEST_CODE) {
             placesPresenter.retrievePlaces();
+            observable.connect();
+        }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -141,6 +150,8 @@ public class PlacesActivity extends AppCompatActivity implements Screen {
         placesPresenter.drain();
         super.onDestroy();
     }
+
+
 }
 
 

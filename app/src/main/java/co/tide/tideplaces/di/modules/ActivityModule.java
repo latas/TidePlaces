@@ -1,23 +1,28 @@
 package co.tide.tideplaces.di.modules;
 
+
 import android.support.v4.app.FragmentManager;
 
 import co.tide.tideplaces.R;
+import co.tide.tideplaces.data.events.PermissionsAcceptedEvent;
 import co.tide.tideplaces.di.scopes.ActivityScope;
 import co.tide.tideplaces.ui.PlacesActivity;
 import co.tide.tideplaces.ui.screens.Screen;
 import dagger.Module;
 import dagger.Provides;
+import io.reactivex.Observable;
 
 @Module
 public class ActivityModule {
 
     final PlacesActivity placesActivity;
+    final Observable<PermissionsAcceptedEvent> observable;
 
 
-    public ActivityModule(PlacesActivity placesActivity) {
+    public ActivityModule(PlacesActivity placesActivity, Observable<PermissionsAcceptedEvent> observable) {
 
         this.placesActivity = placesActivity;
+        this.observable = observable;
     }
 
     @ActivityScope
@@ -25,6 +30,14 @@ public class ActivityModule {
     public Screen placesScreen() {
         return placesActivity;
     }
+
+
+    @ActivityScope
+    @Provides
+    public Observable<PermissionsAcceptedEvent> observable() {
+        return observable;
+    }
+
 
     @ActivityScope
     @Provides
@@ -40,6 +53,7 @@ public class ActivityModule {
     public FragmentManager fragmentManager() {
         return placesActivity.getSupportFragmentManager();
     }
+
 
     @ActivityScope
     @Provides

@@ -22,17 +22,23 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.tide.tideplaces.R;
+import co.tide.tideplaces.data.events.PermissionsAcceptedEvent;
 import co.tide.tideplaces.data.models.ListItem;
 import co.tide.tideplaces.presenters.ListPresenter;
 import co.tide.tideplaces.presenters.PlacesPresenter;
 import co.tide.tideplaces.ui.PlacesActivity;
 import co.tide.tideplaces.ui.adapters.ListAdapter;
 import co.tide.tideplaces.ui.screens.ListScreen;
+import io.reactivex.Observable;
+import io.reactivex.functions.Consumer;
 
 
 public class PlacesListFragment extends Fragment implements ListScreen {
     @Inject
     PlacesPresenter presenter;
+
+    @Inject
+    Observable<PermissionsAcceptedEvent> permissionsObservable;
 
     ListAdapter listAdapter;
 
@@ -64,6 +70,12 @@ public class PlacesListFragment extends Fragment implements ListScreen {
         list.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         listAdapter = new ListAdapter(getActivity());
         list.setAdapter(listAdapter);
+        permissionsObservable.subscribe(new Consumer<PermissionsAcceptedEvent>() {
+            @Override
+            public void accept(PermissionsAcceptedEvent permissionsAcceptedEvent) throws Exception {
+                presenter.subscribeUiObserver(listPresenter);
+            }
+        });
         return view;
     }
 

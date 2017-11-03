@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -75,9 +74,9 @@ public class PlacesListFragment extends Fragment implements ListScreen {
     }
 
     @Override
-    public void openGoogleMaps(LatLng location) {
-        String uri = String.format(Locale.ENGLISH, "geo:%f,%f", location.latitude, location.longitude);
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+    public void openGoogleMaps(LatLng location, String label) {
+        Uri uri = Uri.parse("geo:<" + location.latitude + ">,<" + location.longitude + ">?q=<" + location.latitude + ">,<" + location.longitude + ">(" + label + ")");
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         getActivity().startActivity(intent);
     }
 

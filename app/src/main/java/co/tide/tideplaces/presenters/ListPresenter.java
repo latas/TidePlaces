@@ -35,7 +35,7 @@ public class ListPresenter implements Observer<List<Place>> {
                 listItems.add(new ListItem(place.name(), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        listScreen.openGoogleMaps(place.location());
+                        listScreen.openGoogleMaps(place.location(), place.name());
                     }
                 }));
             }

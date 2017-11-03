@@ -9,5 +9,5 @@ import co.tide.tideplaces.data.models.ListItem;
 public interface ListScreen {
     void show(List<ListItem> listItems);
 
-    public void openGoogleMaps(LatLng location);
+    public void openGoogleMaps(LatLng location,String name);
 }

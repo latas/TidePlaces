@@ -64,7 +64,8 @@ public class MapPresenter implements Consumer<GoogleMap>, Observer<List<Place>> 
             else
                 map.addPoi(new MapItem(place.location(), place.name(), place.distanceFromAnchor() + "m"));
         }
-        map.zoomInBounds(bounds(places));
+        if (places.size() > 0)
+            map.zoomInBounds(bounds(places));
     }
 
     @Override

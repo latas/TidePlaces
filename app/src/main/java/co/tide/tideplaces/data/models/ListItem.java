@@ -10,4 +10,12 @@ public class ListItem {
         this.name = name;
         this.clickListener = clickListener;
     }
+
+    public String name() {
+        return name;
+    }
+
+    public View.OnClickListener itemClickListener() {
+        return clickListener;
+    }
 }

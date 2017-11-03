@@ -19,8 +19,6 @@ public class MapRepository implements Repository<GoogleMap> {
 
     @Override
     public Observable<GoogleMap> data() {
-
-
         return Observable.create(new ObservableOnSubscribe<GoogleMap>() {
             @Override
             public void subscribe(final ObservableEmitter<GoogleMap> e) throws Exception {
@@ -32,9 +30,5 @@ public class MapRepository implements Repository<GoogleMap> {
                 });
             }
         });
-
-
     }
-
-
 }

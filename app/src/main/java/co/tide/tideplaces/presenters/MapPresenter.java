@@ -12,6 +12,7 @@ import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.rxscheduler.BaseSchedulerProvider;
 import co.tide.tideplaces.ui.screens.UiMap;
 import io.reactivex.Observer;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
@@ -21,7 +22,7 @@ public class MapPresenter implements Consumer<GoogleMap>, Observer<List<Place>> 
     final MapView mapView;
     final UiMap map;
     final BaseSchedulerProvider provider;
-
+    final CompositeDisposable disposables = new CompositeDisposable();
 
     public MapPresenter(MapView mapView, UiMap map, BaseSchedulerProvider provider) {
         this.mapView = mapView;
@@ -52,7 +53,7 @@ public class MapPresenter implements Consumer<GoogleMap>, Observer<List<Place>> 
 
     @Override
     public void onSubscribe(Disposable d) {
-
+        disposables.add(d);
     }
 
     @Override
@@ -75,4 +76,9 @@ public class MapPresenter implements Consumer<GoogleMap>, Observer<List<Place>> 
     public void onComplete() {
 
     }
+
+    public void drain() {
+        disposables.clear();
+    }
+
 }

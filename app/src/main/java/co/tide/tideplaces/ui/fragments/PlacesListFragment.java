@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +20,15 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import co.tide.tideplaces.R;
 import co.tide.tideplaces.data.models.ListItem;
 import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.presenters.ListPresenter;
 import co.tide.tideplaces.presenters.PlacesPresenter;
 import co.tide.tideplaces.ui.PlacesActivity;
+import co.tide.tideplaces.ui.adapters.ListAdapter;
 import co.tide.tideplaces.ui.screens.ListScreen;
 import io.reactivex.Observer;
 
@@ -31,6 +36,12 @@ import io.reactivex.Observer;
 public class PlacesListFragment extends Fragment implements ListScreen {
     @Inject
     PlacesPresenter presenter;
+
+    ListAdapter listAdapter;
+
+    @BindView(R.id.list)
+    RecyclerView list;
+
 
     Observer<List<Place>> uiPresenter;
 
@@ -49,15 +60,20 @@ public class PlacesListFragment extends Fragment implements ListScreen {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.list_fragment_layout, container, false);
+        ButterKnife.bind(this, view);
         uiPresenter = new ListPresenter(this);
         presenter.subscribeUiObserver(uiPresenter);
+        list.setHasFixedSize(true);
+        list.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        listAdapter = new ListAdapter(getActivity());
+        list.setAdapter(listAdapter);
         return view;
     }
 
 
     @Override
     public void show(List<ListItem> listItems) {
-
+        listAdapter.addItems(listItems);
     }
 
     @Override

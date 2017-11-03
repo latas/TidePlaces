@@ -38,6 +38,7 @@ public class ListPresenter implements Observer<List<Place>> {
                 }));
             }
         }
+        listScreen.show(listItems);
     }
 
     @Override

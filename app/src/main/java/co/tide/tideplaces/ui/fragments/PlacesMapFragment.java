@@ -76,6 +76,13 @@ public class PlacesMapFragment extends Fragment implements UiMap {
 
 
     @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
+    }
+
+
+    @Override
     public void onMapLoaded(GoogleMap googleMap) {
         this.googleMap = googleMap;
         presenter.subscribeUiObserver(mapPresenter);

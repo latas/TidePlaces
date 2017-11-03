@@ -177,8 +177,6 @@ public class MapListPresentersTest {
 
     @Test
     public void noPlacesAtAll_Empty() {
-
-
         ConnectableObservable placesObservable =
                 Observable.just(Collections.emptyList()).share().replay();
         placesObservable.subscribeWith(mapPresenter);
@@ -197,6 +195,35 @@ public class MapListPresentersTest {
 
     }
 
+
+    @Test
+    public void noPlacesOnlyMine_withError() {
+        ConnectableObservable placesObservable =
+                Observable.mergeDelayError(Observable.just(Collections.singletonList(myPlace())), Observable.error(new Throwable())).share().replay();
+
+        placesObservable.subscribeWith(mapPresenter);
+        placesObservable.subscribeWith(listPresenter);
+        placesObservable.connect();
+        verify(mapPresenter).onNext(mapListCaptor.capture());
+        verify(listPresenter).onNext(listListCaptor.capture());
+
+        verify(mapPresenter).onError(any(Throwable.class));
+        verify(listPresenter).onError(any(Throwable.class));
+
+        verify(screen).show(listItemsListCaptor.capture());
+
+        verify(map, never()).addPoi(any(MapItem.class));
+        verify(map).addMyPoi(myPosCaptor.capture());
+
+        Assert.assertEquals(1, listListCaptor.getValue().size());
+        Assert.assertEquals(1, mapListCaptor.getValue().size());
+        Assert.assertEquals(0, listItemsListCaptor.getValue().size());
+
+        Assert.assertEquals(myPlace().location().latitude, myPosCaptor.getValue().latitude, 0);
+        Assert.assertEquals(myPlace().location().longitude, myPosCaptor.getValue().longitude, 0);
+
+
+    }
 
     private Place myPlace() {
         return new MyPlace(new LatLng(22, 23));

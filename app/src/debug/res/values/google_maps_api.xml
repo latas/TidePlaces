@@ -1,4 +1,4 @@
 <resources>
-
-    <string name="api_key" templateMergeStrategy="preserve" translatable="false">AIzaSyC56EL4bGNIRHOGckZXj4aja0nBs15ESJU</string>
+    <!--ADD YOU API KEY HERE-->
+    <string name="api_key" templateMergeStrategy="preserve" translatable="false">YOUR_API_KEY</string>
 </resources>

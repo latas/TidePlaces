@@ -48,7 +48,7 @@ public class ListPresenter implements Observer<List<Place>> {
         List<ListItem> listItems = new ArrayList<>();
         for (final Place place : places) {
             if (!place.isMyLocation()) {
-                listItems.add(new ListItem(place.name(), new View.OnClickListener() {
+                listItems.add(new ListItem(place.name(), place.distanceFromAnchor() + "m", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         listScreen.openGoogleMaps(Uri.parse(String.format(Locale.ENGLISH, "geo:<%.7f>,<%.7f>?q=<%.7f>,<%.7f>(%s)", place.location().latitude, place.location().longitude, place.location().latitude, place.location().longitude, place.name())));

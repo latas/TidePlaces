@@ -41,6 +41,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.name.setText(items.get(position).name());
+        holder.distance.setText(items.get(position).distance());
         holder.cellParent.setOnClickListener(items.get(position).itemClickListener());
     }
 
@@ -59,6 +60,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
         @BindView(R.id.name_text)
         TextView name;
+        @BindView(R.id.distance_text)
+        TextView distance;
         @BindView(R.id.cell_parent)
         LinearLayout cellParent;
 

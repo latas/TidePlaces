@@ -2,23 +2,26 @@ package co.tide.tideplaces.repositories;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
 import co.tide.tideplaces.BaseTest;
 import co.tide.tideplaces.data.interactors.MyLocationRepository;
 import co.tide.tideplaces.data.interactors.PlacesRepository;
+import co.tide.tideplaces.data.models.GeoDistance;
 import co.tide.tideplaces.data.models.MyPlace;
 import co.tide.tideplaces.data.models.Place;
 import co.tide.tideplaces.data.models.RxException;
+import co.tide.tideplaces.data.models.Venue;
 import co.tide.tideplaces.data.models.error.ErrorCodes;
 import co.tide.tideplaces.data.models.error.LocationError;
 import co.tide.tideplaces.data.models.error.UnAuthorizedLocationError;
@@ -54,12 +57,17 @@ public class PlacesRepositoryTest extends BaseTest {
 
     private int totalPlaces = 20;
     private LatLng myLocation = new LatLng(10.0, 10.0);
+    private LatLng[] radnomLocationsArray = new LatLng[totalPlaces];
+
 
     @Before
     public void setUp() {
         initMocks(this);
         repository = new PlacesRepository(apiService, params, schedulersProvider, myLocationRepository);
         testObserver = new TestObserver<>();
+        SecureRandom random = new SecureRandom();
+        for (int i = 0; i < radnomLocationsArray.length; i++)
+            radnomLocationsArray[i] = new LatLng(random.nextDouble(), random.nextDouble());
 
     }
 
@@ -72,8 +80,15 @@ public class PlacesRepositoryTest extends BaseTest {
         final List<Place> expectedList2 = new ArrayList<>();
 
         for (int i = 0; i < getRandomPlaces().size(); i++) {
-            expectedList2.add(getRandomPlaces().get(i).map());
+            expectedList2.add(new Venue(getRandomPlaces().get(i).map(), new GeoDistance(getRandomPlaces().get(i).map().location(), myLocation).meters()));
         }
+
+        Collections.sort(expectedList2, new Comparator<Place>() {
+            @Override
+            public int compare(Place place, Place t1) {
+                return place.distanceFromAnchor().compareTo(t1.distanceFromAnchor());
+            }
+        });
 
 
         ConnectableObservable obs = (ConnectableObservable) repository.init().data();
@@ -83,17 +98,16 @@ public class PlacesRepositoryTest extends BaseTest {
         testObserver.assertNoErrors().assertValueAt(1, new Predicate<List<Place>>() {
             @Override
             public boolean test(List<Place> places) throws Exception {
-                Assert.assertEquals(expectedList2, places);
-                return true;
+                return expectedList2.equals(places) && listIsSortedByDistance(places);
             }
         }).assertValueAt(0, new Predicate<List<Place>>() {
             @Override
             public boolean test(List<Place> places) throws Exception {
-                Assert.assertEquals(expectedList1, places);
-                return true;
+                return expectedList1.equals(places);
             }
         }).assertValueCount(2).assertValueSet(Arrays.asList(expectedList1, expectedList2));
     }
+
 
     @Test
     public void noPlacesReturned() {
@@ -198,7 +212,8 @@ public class PlacesRepositoryTest extends BaseTest {
     private List<GSPlaceResult> getRandomPlaces() {
         List<GSPlaceResult> placeResults = new ArrayList<>();
         for (int i = 0; i < totalPlaces; i++) {
-            placeResults.add(new GSPlaceResult("" + i, "name" + i, new PlaceResponseGeometry(new GSPlaceLocation(15.0, 15.0))));
+            placeResults.add(new GSPlaceResult("" + i, "name" + i,
+                    new PlaceResponseGeometry(new GSPlaceLocation(radnomLocationsArray[i].latitude, radnomLocationsArray[i].longitude))));
         }
         return placeResults;
     }
@@ -206,5 +221,16 @@ public class PlacesRepositoryTest extends BaseTest {
     private ConstantParams randomParams() {
         return new ConstantParams("ApikEy", "randomType", new Random().nextInt());
 
+    }
+
+
+    private boolean listIsSortedByDistance(List<Place> places) {
+        Float previus = -1f;
+        for (Place place : places) {
+            if (place.distanceFromAnchor() < previus)
+                return false;
+            previus = place.distanceFromAnchor();
+        }
+        return true;
     }
 }

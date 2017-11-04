@@ -12,8 +12,17 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:layout_weight="0.95"
+        android:layout_weight="0.75"
         android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/distance_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_weight="0.2"
+        android:gravity="center"
+        android:textSize="12sp" />
 
     <ImageView
         android:layout_width="wrap_content"

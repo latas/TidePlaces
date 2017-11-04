@@ -3,6 +3,7 @@ package co.tide.tideplaces.data.interactors;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -62,7 +63,12 @@ public class PlacesRepository implements Repository<List<Place>> {
                                         return new Venue(place, new GeoDistance(latLng, place.location()).meters());
                                     }
                                 })
-                                .toList()
+                                .toSortedList(new Comparator<Place>() {
+                                    @Override
+                                    public int compare(Place place, Place t1) {
+                                        return place.distanceFromAnchor().compareTo(t1.distanceFromAnchor());
+                                    }
+                                })
                                 .toObservable()
                         , Observable.just(Collections.<Place>singletonList(new MyPlace(latLng))));
             }

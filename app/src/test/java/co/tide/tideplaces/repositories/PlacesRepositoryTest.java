@@ -225,11 +225,10 @@ public class PlacesRepositoryTest extends BaseTest {
 
 
     private boolean listIsSortedByDistance(List<Place> places) {
-        Float previus = -1f;
-        for (Place place : places) {
-            if (place.distanceFromAnchor() < previus)
+
+        for (int i = 0; i < places.size() - 1; i++) {
+            if (places.get(i).distanceFromAnchor() > places.get(i + 1).distanceFromAnchor())
                 return false;
-            previus = place.distanceFromAnchor();
         }
         return true;
     }

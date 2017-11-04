@@ -3,7 +3,7 @@
 Technical project for the position of Android developer at [Tide.co](http://www.tide.co).
 
 ## Description
-
+This a simple app that based on your location, provides you with nearby bars using the Google places API. The retrieved places are shown both in a list and a map.
 
 ## Screenshots
 
@@ -22,11 +22,15 @@ More info about this architecture may be found [here](https://antonioleiva.com/m
 ## Libraries used
 * **Dagger 2**
 * **Retrofit**
-* **Picasso**
 * **ButterKnife**
 * **RxJava 2**
 * **RxAndroid**
 * **Mockito**
+
+## Getting started
+Just clone the project and import it to android studio or in android studio select "New Project from version control -> Github" and fill  the reopository url `https://github.com/latas/TidePlaces.git`
+
+Also, you have to provide an **unrestricted** Google Api Key to `~/app/src/debug/res/values/google_maps_api.xml` with the Google places web API and Android Maps API enabled.
 
 ## IDE
 Developed in Android studio 3.0 using Gradle 3.0.0
